@@ -10,7 +10,7 @@
 <meta property="og:title" content="R class home work - Feng&#39;s wensite">
 
 
-  <link href='/logo.ico' rel='icon' type='image/x-icon'/>
+  <link href='http://localhost:4321/logo.ico' rel='icon' type='image/x-icon'/>
 
 
 
@@ -73,9 +73,9 @@
 
     <div class="article-content">
       
-<script src="/2021/05/28/r-class-home-work/index_files/header-attrs/header-attrs.js"></script>
-<link href="/2021/05/28/r-class-home-work/index_files/pagedtable/css/pagedtable.css" rel="stylesheet" />
-<script src="/2021/05/28/r-class-home-work/index_files/pagedtable/js/pagedtable.js"></script>
+<script src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/header-attrs/header-attrs.js"></script>
+<link href="http://localhost:4321/2021/05/28/r-class-home-work/index_files/pagedtable/css/pagedtable.css" rel="stylesheet" />
+<script src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/pagedtable/js/pagedtable.js"></script>
 
 
 <p>这里由于还没有搞清楚具体的实施方案所以后五次作业还未上传。</p>
@@ -100,7 +100,7 @@ stem(data5)</code></pre>
 <pre class="r"><code>x &lt;- ((0:10000)/10000)*2*pi
 y &lt;- x^3 + sin(x)*cos(x)
 plot(x, y, col=&quot;blue&quot;, type=&quot;l&quot;, xlab=&quot;自变量X&quot;, ylab=&quot;函数Y&quot;, main=&quot;示意图&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 </div>
 <div id="第二次作业" class="section level1">
@@ -141,7 +141,7 @@ data1&lt;-data.frame(a=x,b=y,c=z)
 #g&lt;-ggplot(data = data1,aes(x=a,y=b),col=&quot;red&quot;)+geom_line()
 library(ggplot2)
 ggplot()+geom_line(data=data1,aes(x=a,y=c),col=&quot;blue&quot;)+geom_line(data = data1,aes(x=a,y=b),col=&quot;red&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>(punif(3.5,2,4)-punif(2.5,2,4))</code></pre>
 <pre><code>## [1] 0.5</code></pre>
 </div>
@@ -153,7 +153,7 @@ y&lt;-dexp(x,4)
 z&lt;-pexp(x,4)
 plot(x,z,type = &quot;l&quot;,col=&quot;blue&quot;)
 lines(x,y,type =&quot;l&quot;,col=&quot;red&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre class="r"><code>(pexp(5,4)-pexp(1,4))</code></pre>
 <pre><code>## [1] 0.01831564</code></pre>
 </div>
@@ -164,7 +164,7 @@ y&lt;-dnorm(x,1,2)
 z&lt;-pnorm(x,1,2)
 plot(x,y,type = &quot;l&quot;,col=&quot;red&quot;)
 lines(x,z,type=&quot;l&quot;,col=&quot;blue&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>(pnorm(3,1,2)-pnorm(-2,1,2))</code></pre>
 <pre><code>## [1] 0.7745375</code></pre>
 </div>
@@ -341,32 +341,32 @@ fzero(f,1,2,1e-5)</code></pre>
 names(data) &lt;- c(&quot;name&quot;, &quot;age&quot;, &quot;height&quot;, &quot;weight&quot;, &quot;sex&quot;)
 plot(data$height, data$weight, main=&quot;Regression on Height and Weight&quot;,
      xlab=&quot;Height&quot;, ylab=&quot;Weight&quot;)  </code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <pre class="r"><code>par(mfrow=c(2, 2))
 qqnorm(data$weight)
 hist(data$weight)
 boxplot(data$weight) 
 qqplot(data$height, data$weight, main=&quot;QQPLOT&quot;, xlab=&quot;Height&quot;, ylab=&quot;Weight&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
 <div id="第二题-3" class="section level2">
 <h2>第二题</h2>
 <pre class="r"><code>data &lt;- read.table(&quot;cl.txt&quot;, header=TRUE)
 plot(data)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <pre class="r"><code>#coplot(data$Weight~data$Height|data$sex)
 pairs(data[,c(&quot;Age&quot;, &quot;Weight&quot;, &quot;Height&quot;)])</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
 <pre class="r"><code>x &lt;- data.frame(x1=rnorm(72, 0, 1),
              x2=rnorm(72, 0, 1),
              x3=rnorm(72, 0, 1),
              x4=rnorm(72, 0, 1)) 
 t &lt;- ts(x, start=c(2015, 1), frequency=12)
 plot(t)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-3.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-3.png" width="672" /></p>
 <pre class="r"><code>plot(x[,&quot;x1&quot;], x[,&quot;x2&quot;], col=&quot;black&quot;, xlab=&quot;x&quot;, ylab=&quot;y&quot;, main=&quot;normal values&quot;)
 points(x[,&quot;x3&quot;], x[,&quot;x4&quot;], col=&quot;red&quot;)
 legend(0, 0, &quot;scatters&quot;, fill=&quot;blue&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-4.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-4.png" width="672" /></p>
 <pre class="r"><code>plot(x[,&quot;x1&quot;], x[,&quot;x2&quot;], col=&quot;black&quot;, xlab=&quot;x&quot;, ylab=&quot;y&quot;, main=&quot;normal values&quot;)
 lines(sort(x[,&quot;x3&quot;], decreasing=T), sort(x[,&quot;x4&quot;], decreasing=T), col=&quot;blue&quot;,type=&quot;o&quot;)
 text(0, 0, labels=&quot;* the position of (0,0)&quot;)
@@ -375,7 +375,7 @@ l &lt;- lm(sort(x[,&quot;x3&quot;], decreasing=T)~sort(x[,&quot;x4&quot;], decre
 abline(l$coefficients)
 abline(h=0,col=&quot;red&quot;)
 abline(v=0,col=&quot;green&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-5.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-24-5.png" width="672" /></p>
 </div>
 <div id="第三题-2" class="section level2">
 <h2>第三题</h2>
@@ -390,7 +390,7 @@ plot(x, sin(x), col=&quot;red&quot;)
 plot(x, 3*cos(x), col=&quot;blue&quot;)
 plot(x, sin(x)*cos(x), col=&quot;yellow&quot;)
 plot(x, sin(x)/x, col=&quot;green&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 </div>
 </div>
 <div id="第六次作业" class="section level1">
@@ -433,27 +433,27 @@ data$jobcat&lt;-as.factor(data$jobcat)</code></pre>
 <div id="收入与性别分类箱线图" class="section level3">
 <h3>收入与性别分类箱线图</h3>
 <pre class="r"><code>ggplot(data = data,aes(x=gender,y=salary))+geom_jitter(alpha=.35,color=&#39;#4169E1&#39;,size=2.2)+geom_boxplot(alpha=.7,color=&#39;#000080&#39;)+stat_summary(fun.y=&quot;mean&quot;,geom=&quot;point&quot;,color=&quot;#000080&quot;,shape=6,size=3.5)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <p>从收入与性别分类箱线图可以看出，男性的收入整体显著比女性高。女性收入较为集中，男性收入的分散程度大于女性。</p>
 </div>
 <div id="收入与是否少数族裔箱线图" class="section level3">
 <h3>收入与是否少数族裔箱线图</h3>
 <pre class="r"><code>ggplot(data = data,aes(x=minority,y=salary))+geom_jitter(alpha=.35,color=&#39;#4169E1&#39;,size=2.2)+geom_boxplot(alpha=.7,color=&#39;#000080&#39;)+stat_summary(fun.y=&quot;mean&quot;,geom=&quot;point&quot;,color=&quot;#000080&quot;,shape=6,size=3.5)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
 <pre><code>## Warning: `fun.y` is deprecated. Use `fun` instead.</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>从收入与是否少数族裔图看出，非少数族裔的收入中位数与少数族裔的中位数的显著差别不大，但是非少数族裔的收入整体还是明显大于少数族裔的收入，说明在美国，少数族裔的收入是明显低于非少数族裔的。</p>
 </div>
 <div id="收入与教育年限分类箱线图" class="section level3">
 <h3>收入与教育年限分类箱线图</h3>
 <pre class="r"><code>ggplot(data = data,aes(x=educ,y=salary))+geom_jitter(alpha=.35,color=&#39;#4169E1&#39;,size=2.2)+geom_boxplot(alpha=.7,color=&#39;#000080&#39;)+stat_summary(fun.y=&quot;mean&quot;,geom=&quot;point&quot;,color=&quot;#000080&quot;,shape=6,size=3.5)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <p>通过上图可以看出，受教育年限是明显的与收入大小成正比关系。在8和12这两个阶段相差不大，但是在16和17这两个阶段相差很大，一旦受教育程度从16提升到17，其收入程度会有很大的提升。并且随着年度的增加，这种边际效益会慢慢递减。</p>
 </div>
 <div id="收入与职位等级分类箱线图" class="section level3">
 <h3>收入与职位等级分类箱线图</h3>
 <pre class="r"><code>ggplot(data = data,aes(x=jobcat,y=salary))+geom_jitter(alpha=.35,color=&#39;#4169E1&#39;,size=2.2)+geom_boxplot(alpha=.7,color=&#39;#000080&#39;)+stat_summary(fun.y=&quot;mean&quot;,geom=&quot;point&quot;,color=&quot;#000080&quot;,shape=6,size=3.5)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
 <pre><code>## Warning: `fun.y` is deprecated. Use `fun` instead.</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <p>通过上图看出，职位等级的不同会明显提升收入水平，而在第二等级的数据十分紧密，初步推测是由于样本太小导致的，对数据中的jobcat进行计数分析如下。</p>
 <pre class="r"><code>knitr::kable(data%&gt;%count(jobcat))</code></pre>
 <table>
@@ -484,19 +484,19 @@ data$jobcat&lt;-as.factor(data$jobcat)</code></pre>
 <h3>受教育年限与性别关系</h3>
 <pre class="r"><code>data2&lt;-read.csv(&quot;Employee.csv&quot;,header = T)#读取没有因子化的数据
 ggplot(data2,aes(x=educ,fill=gender))+geom_histogram(position = &quot;identity&quot;,alpha=0.6,bins = 25)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <p>从上图看出，在搜集到的数据中，男性的受教育程度明显的多于女性，这也与受教育程度越高收入越高的事实相对应。</p>
 </div>
 <div id="工作时间与性别关系图" class="section level3">
 <h3>工作时间与性别关系图</h3>
 <pre class="r"><code>ggplot(data2,aes(x=jobtime,fill=gender))+geom_histogram(position = &quot;identity&quot;,alpha=0.6,bins = 25)+theme(axis.title.y=element_text(size=15))+theme(axis.title.x=element_text(size=15))+theme(axis.text.y=element_text(size=15))+theme(axis.text.x=element_text(size=15))</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 <p>从上图可以看出女性的工作市场在85一周之前是相对比男性多，但是在每周85之后是明显的少于男性工作时长。这也许是因为男性从事的工作的时间长度明显大于女性。</p>
 </div>
 <div id="不同起始薪资与收入的关系" class="section level3">
 <h3>不同起始薪资与收入的关系</h3>
 <pre class="r"><code>ggplot(data = data2,aes(x = salbegin))+geom_histogram(binwidth = 500,color = &quot;blue&quot;)+geom_freqpoly(mapping = aes(x=salary),binwidth = 500,color = &quot;red&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 <p>上图纵轴是计数，横轴是起始薪资和当前薪资。直方图代表起始薪资，折线图代表现在的薪资。从上图看出，基本上当前的薪资都会比起始薪资高，并且数据都是在峰值左边较为聚集，在峰值右边明显的分散。</p>
 </div>
 </div>
@@ -540,7 +540,7 @@ summary(model1)</code></pre>
 <h3>模型的检验</h3>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(model1,which = c(1:4))</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
 <pre class="r"><code>library(equatiomatic)</code></pre>
 <div id="加权最小二乘建模" class="section level4">
 <h4>加权最小二乘建模</h4>
@@ -613,7 +613,7 @@ biaozhunhua&lt;-scale(e)
 sqrtcancha&lt;-sqrt(biaozhunhua)</code></pre>
 <pre><code>## Warning in sqrt(biaozhunhua): 产生了NaNs</code></pre>
 <pre class="r"><code>plot(sqrtcancha~y.fit)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
 <p>模型的表达式如下
 <span class="math display">\[
 \operatorname{salary} = \alpha + \beta_{1}(\operatorname{educ}) + \beta_{2}(\operatorname{jobcat}) + \beta_{3}(\operatorname{salbegin}) + \beta_{4}(\operatorname{jobtime}) + \beta_{5}(\operatorname{prevexp}) + \beta_{6}(\operatorname{gender}_{\operatorname{m}}) + \epsilon
@@ -627,7 +627,7 @@ sqrtcancha&lt;-sqrt(biaozhunhua)</code></pre>
 <p>(</p>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(model2,which = c(1:4),caption = &quot;model2未加权&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-40-1.png" width="672" />
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-40-1.png" width="672" />
 )</p>
 </div>
 <div id="进行加权建模图" class="section level4">
@@ -635,7 +635,7 @@ plot(model2,which = c(1:4),caption = &quot;model2未加权&quot;)</code></pre>
 <p>(</p>
 <pre class="r"><code>par(mfrow=c(2,2))
 plot(model3,which = c(1:4),caption = &quot;model3加权建模&quot;)</code></pre>
-<p><img src="/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-41-1.png" width="672" />
+<p><img src="http://localhost:4321/2021/05/28/r-class-home-work/index_files/figure-html/unnamed-chunk-41-1.png" width="672" />
 )</p>
 <p>通过上图看出,通过加权可以解决模型的异方差性。</p>
 </div>

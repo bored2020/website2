@@ -1,4 +1,4 @@
-baseurl: /
+baseurl: http://localhost:4321/
 languageCode: en-us 
 title: Feng's wensite
 theme: hugo-lithium
