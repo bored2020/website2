@@ -1,0 +1,2 @@
+"0","qqplot(data$height, data$weight, main=""QQPLOT"", xlab=""Height"", ylab=""Weight"")"
+"0",""

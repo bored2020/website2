@@ -1,0 +1,4 @@
+"0","data <- read.table(""cl.txt"", header=TRUE)"
+"0","names(data) <- c(""name"", ""age"", ""height"", ""weight"", ""sex"")"
+"0","plot(data$height, data$weight, main=""Regression on Height and Weight"","
+"0","     xlab=""Height"", ylab=""Weight"")	"
