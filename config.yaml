@@ -1,5 +1,5 @@
 baseurl: http://localhost:4321/
-languageCode: en-us 
+languageCode: en-us
 title: Feng's website
 theme: hugo-lithium
 googleAnalytics: ''
@@ -32,9 +32,10 @@ params:
   highlightjsTheme: github
   highlightjsVersion: 9.12.0
   logo:
+    img: "/images/logo.png"
     alt: Logo
     height: 50
-    url: logo.png
+    url: "/"
     width: 50
 markup:
   defaultMarkdownHandler: goldmark
