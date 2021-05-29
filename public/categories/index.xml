@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Feng&#39;s website</title>
-    <link>http://localhost:4321/categories/</link>
+    <link>https://fyq2.netlify.app/categories/</link>
     <description>Recent content in Categories on Feng&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 28 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:4321/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 28 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>R</title>
-      <link>http://localhost:4321/categories/r/</link>
+      <link>https://fyq2.netlify.app/categories/r/</link>
       <pubDate>Fri, 28 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:4321/categories/r/</guid>
+      <guid>https://fyq2.netlify.app/categories/r/</guid>
       <description></description>
     </item>
     

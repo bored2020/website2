@@ -2,33 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:4321/categories/</loc>
+    <loc>https://fyq2.netlify.app/categories/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/</loc>
+    <loc>https://fyq2.netlify.app/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/homework/</loc>
+    <loc>https://fyq2.netlify.app/tags/homework/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/post/</loc>
+    <loc>https://fyq2.netlify.app/post/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/categories/r/</loc>
+    <loc>https://fyq2.netlify.app/categories/r/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/2021/05/28/r-class-home-work/</loc>
+    <loc>https://fyq2.netlify.app/2021/05/28/r-class-home-work/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/tags/</loc>
+    <loc>https://fyq2.netlify.app/tags/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/2021/05/28/to-first-make-it-happen/</loc>
+    <loc>https://fyq2.netlify.app/2021/05/28/to-first-make-it-happen/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/2021/05/28/first-est./</loc>
+    <loc>https://fyq2.netlify.app/2021/05/28/first-est./</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:4321/about/</loc>
+    <loc>https://fyq2.netlify.app/about/</loc>
   </url>
 </urlset>
