@@ -1,6 +1,6 @@
 baseurl: http://localhost:4321/
 languageCode: en-us 
-title: Feng's wensite
+title: Feng's website
 theme: hugo-lithium
 googleAnalytics: ''
 disqusShortname: ''
