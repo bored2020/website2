@@ -1,4 +1,4 @@
-baseurl: http://localhost:4321/
+baseurl: https://fyq2.netlify.app/about/
 languageCode: en-us
 title: Feng's website
 theme: hugo-lithium
@@ -19,7 +19,7 @@ menu:
     - name: GitHub
       url: https://github.com/bored2020
     - name: Twitter
-      url: https://twitter.com/rstudio
+      url: https://fyq2.netlify.app/about/
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
