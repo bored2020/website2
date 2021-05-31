@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>share on Feng&#39;s website</title>
+    <link>https://fyq2.netlify.app/about/tags/share/</link>
+    <description>Recent content in share on Feng&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 31 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/about/tags/share/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>资源分享</title>
+      <link>https://fyq2.netlify.app/about/2021/05/31/resoures./</link>
+      <pubDate>Mon, 31 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/about/2021/05/31/resoures./</guid>
+      <description>阶段性目标最近在网上学习The elements of statistical learning这本书，网上可以找到英文原版本，但是发现了一个更好的中文版本，这个不仅有详细的翻译，并且对课后习题都有详细的解答，定理都有推导过程等，可以跟着这个步骤学。详细连接跟上连接
+在网上还找到了比较好的R的比较整体的参考，来自于北京大学李东风老师，如果对R有什么不懂或者想进阶的可以去李老师网站里面自学。连接
+</description>
+    </item>
+    
+  </channel>
+</rss>
