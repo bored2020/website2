@@ -6,7 +6,11 @@ slug: r-class-home-work
 categories:
   - R
 tags: [homework]
-
+output: 
+  html_document: 
+    toc: yes
+    highlight: espresso
+    number_sections: yes
 ---
 这里由于还没有搞清楚具体的实施方案所以后五次作业还未上传。
 
