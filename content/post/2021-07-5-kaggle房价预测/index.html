@@ -1,0 +1,745 @@
+---
+title: "kaggle房价预测"
+author: "Feng Yu qi"
+date: '2021-07-05'
+slug: kaggle housing price predict
+categories:
+- R
+- Rmakrdown
+- table
+tags:
+- share
+- machinelearning
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>最近在网上尝试练习使用了kaggle中的高级房价预测，这个问题本质上回归问题，使用机器学习的方法和技巧可以较好的解决这一类问题，最终本文使用<code>BeSS</code>这一方法来处理该问题，<span class="math inline">\(MSE\)</span>近乎为0，效果不错，故和大家分享。这偏文章的前面受到该<a href="https://cloud.tencent.com/developer/article/1005033">博客</a>的启发，特此感谢。</p>
+<div id="探索性分析" class="section level1">
+<h1>探索性分析</h1>
+<p>首先读入数据housing。将数据导入到data变量中，观察data变量的结构。</p>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    2919 obs. of  81 variables:
+##  $ Id           : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ MSSubClass   : int  60 20 60 70 60 50 20 60 50 190 ...
+##  $ MSZoning     : Factor w/ 5 levels &quot;C (all)&quot;,&quot;FV&quot;,..: 4 4 4 4 4 4 4 4 5 4 ...
+##  $ LotFrontage  : int  65 80 68 60 84 85 75 NA 51 50 ...
+##  $ LotArea      : int  8450 9600 11250 9550 14260 14115 10084 10382 6120 7420 ...
+##  $ Street       : Factor w/ 2 levels &quot;Grvl&quot;,&quot;Pave&quot;: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Alley        : Factor w/ 2 levels &quot;Grvl&quot;,&quot;Pave&quot;: NA NA NA NA NA NA NA NA NA NA ...
+##  $ LotShape     : Factor w/ 4 levels &quot;IR1&quot;,&quot;IR2&quot;,&quot;IR3&quot;,..: 4 4 1 1 1 1 4 1 4 4 ...
+##  $ LandContour  : Factor w/ 4 levels &quot;Bnk&quot;,&quot;HLS&quot;,&quot;Low&quot;,..: 4 4 4 4 4 4 4 4 4 4 ...
+##  $ Utilities    : Factor w/ 2 levels &quot;AllPub&quot;,&quot;NoSeWa&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ LotConfig    : Factor w/ 5 levels &quot;Corner&quot;,&quot;CulDSac&quot;,..: 5 3 5 1 3 5 5 1 5 1 ...
+##  $ LandSlope    : Factor w/ 3 levels &quot;Gtl&quot;,&quot;Mod&quot;,&quot;Sev&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Neighborhood : Factor w/ 25 levels &quot;Blmngtn&quot;,&quot;Blueste&quot;,..: 6 25 6 7 14 12 21 17 18 4 ...
+##  $ Condition1   : Factor w/ 9 levels &quot;Artery&quot;,&quot;Feedr&quot;,..: 3 2 3 3 3 3 3 5 1 1 ...
+##  $ Condition2   : Factor w/ 8 levels &quot;Artery&quot;,&quot;Feedr&quot;,..: 3 3 3 3 3 3 3 3 3 1 ...
+##  $ BldgType     : Factor w/ 5 levels &quot;1Fam&quot;,&quot;2fmCon&quot;,..: 1 1 1 1 1 1 1 1 1 2 ...
+##  $ HouseStyle   : Factor w/ 8 levels &quot;1.5Fin&quot;,&quot;1.5Unf&quot;,..: 6 3 6 6 6 1 3 6 1 2 ...
+##  $ OverallQual  : int  7 6 7 7 8 5 8 7 7 5 ...
+##  $ OverallCond  : int  5 8 5 5 5 5 5 6 5 6 ...
+##  $ YearBuilt    : int  2003 1976 2001 1915 2000 1993 2004 1973 1931 1939 ...
+##  $ YearRemodAdd : int  2003 1976 2002 1970 2000 1995 2005 1973 1950 1950 ...
+##  $ RoofStyle    : Factor w/ 6 levels &quot;Flat&quot;,&quot;Gable&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ RoofMatl     : Factor w/ 8 levels &quot;ClyTile&quot;,&quot;CompShg&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Exterior1st  : Factor w/ 15 levels &quot;AsbShng&quot;,&quot;AsphShn&quot;,..: 13 9 13 14 13 13 13 7 4 9 ...
+##  $ Exterior2nd  : Factor w/ 16 levels &quot;AsbShng&quot;,&quot;AsphShn&quot;,..: 14 9 14 16 14 14 14 7 16 9 ...
+##  $ MasVnrType   : Factor w/ 4 levels &quot;BrkCmn&quot;,&quot;BrkFace&quot;,..: 2 3 2 3 2 3 4 4 3 3 ...
+##  $ MasVnrArea   : int  196 0 162 0 350 0 186 240 0 0 ...
+##  $ ExterQual    : Factor w/ 4 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 3 4 3 4 3 4 3 4 4 4 ...
+##  $ ExterCond    : Factor w/ 5 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ Foundation   : Factor w/ 6 levels &quot;BrkTil&quot;,&quot;CBlock&quot;,..: 3 2 3 1 3 6 3 2 1 1 ...
+##  $ BsmtQual     : Factor w/ 4 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 3 3 3 4 3 3 1 3 4 4 ...
+##  $ BsmtCond     : Factor w/ 4 levels &quot;Fa&quot;,&quot;Gd&quot;,&quot;Po&quot;,..: 4 4 4 2 4 4 4 4 4 4 ...
+##  $ BsmtExposure : Factor w/ 4 levels &quot;Av&quot;,&quot;Gd&quot;,&quot;Mn&quot;,..: 4 2 3 4 1 4 1 3 4 4 ...
+##  $ BsmtFinType1 : Factor w/ 6 levels &quot;ALQ&quot;,&quot;BLQ&quot;,&quot;GLQ&quot;,..: 3 1 3 1 3 3 3 1 6 3 ...
+##  $ BsmtFinSF1   : int  706 978 486 216 655 732 1369 859 0 851 ...
+##  $ BsmtFinType2 : Factor w/ 6 levels &quot;ALQ&quot;,&quot;BLQ&quot;,&quot;GLQ&quot;,..: 6 6 6 6 6 6 6 2 6 6 ...
+##  $ BsmtFinSF2   : int  0 0 0 0 0 0 0 32 0 0 ...
+##  $ BsmtUnfSF    : int  150 284 434 540 490 64 317 216 952 140 ...
+##  $ TotalBsmtSF  : int  856 1262 920 756 1145 796 1686 1107 952 991 ...
+##  $ Heating      : Factor w/ 6 levels &quot;Floor&quot;,&quot;GasA&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ HeatingQC    : Factor w/ 5 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 1 1 1 3 1 1 1 1 3 1 ...
+##  $ CentralAir   : Factor w/ 2 levels &quot;N&quot;,&quot;Y&quot;: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Electrical   : Factor w/ 5 levels &quot;FuseA&quot;,&quot;FuseF&quot;,..: 5 5 5 5 5 5 5 5 2 5 ...
+##  $ X1stFlrSF    : int  856 1262 920 961 1145 796 1694 1107 1022 1077 ...
+##  $ X2ndFlrSF    : int  854 0 866 756 1053 566 0 983 752 0 ...
+##  $ LowQualFinSF : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ GrLivArea    : int  1710 1262 1786 1717 2198 1362 1694 2090 1774 1077 ...
+##  $ BsmtFullBath : int  1 0 1 1 1 1 1 1 0 1 ...
+##  $ BsmtHalfBath : int  0 1 0 0 0 0 0 0 0 0 ...
+##  $ FullBath     : int  2 2 2 1 2 1 2 2 2 1 ...
+##  $ HalfBath     : int  1 0 1 0 1 1 0 1 0 0 ...
+##  $ BedroomAbvGr : int  3 3 3 3 4 1 3 3 2 2 ...
+##  $ KitchenAbvGr : int  1 1 1 1 1 1 1 1 2 2 ...
+##  $ KitchenQual  : Factor w/ 4 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 3 4 3 3 3 4 3 4 4 4 ...
+##  $ TotRmsAbvGrd : int  8 6 6 7 9 5 7 7 8 5 ...
+##  $ Functional   : Factor w/ 7 levels &quot;Maj1&quot;,&quot;Maj2&quot;,..: 7 7 7 7 7 7 7 7 3 7 ...
+##  $ Fireplaces   : int  0 1 1 1 1 0 1 2 2 2 ...
+##  $ FireplaceQu  : Factor w/ 5 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: NA 5 5 3 5 NA 3 5 5 5 ...
+##  $ GarageType   : Factor w/ 6 levels &quot;2Types&quot;,&quot;Attchd&quot;,..: 2 2 2 6 2 2 2 2 6 2 ...
+##  $ GarageYrBlt  : int  2003 1976 2001 1998 2000 1993 2004 1973 1931 1939 ...
+##  $ GarageFinish : Factor w/ 3 levels &quot;Fin&quot;,&quot;RFn&quot;,&quot;Unf&quot;: 2 2 2 3 2 3 2 2 3 2 ...
+##  $ GarageCars   : int  2 2 2 3 3 2 2 2 2 1 ...
+##  $ GarageArea   : int  548 460 608 642 836 480 636 484 468 205 ...
+##  $ GarageQual   : Factor w/ 5 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 5 5 5 5 5 5 5 5 2 3 ...
+##  $ GarageCond   : Factor w/ 5 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ PavedDrive   : Factor w/ 3 levels &quot;N&quot;,&quot;P&quot;,&quot;Y&quot;: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ WoodDeckSF   : int  0 298 0 0 192 40 255 235 90 0 ...
+##  $ OpenPorchSF  : int  61 0 42 35 84 30 57 204 0 4 ...
+##  $ EnclosedPorch: int  0 0 0 272 0 0 0 228 205 0 ...
+##  $ X3SsnPorch   : int  0 0 0 0 0 320 0 0 0 0 ...
+##  $ ScreenPorch  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PoolArea     : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PoolQC       : Factor w/ 3 levels &quot;Ex&quot;,&quot;Fa&quot;,&quot;Gd&quot;: NA NA NA NA NA NA NA NA NA NA ...
+##  $ Fence        : Factor w/ 4 levels &quot;GdPrv&quot;,&quot;GdWo&quot;,..: NA NA NA NA NA 3 NA NA NA NA ...
+##  $ MiscFeature  : Factor w/ 4 levels &quot;Gar2&quot;,&quot;Othr&quot;,..: NA NA NA NA NA 3 NA 3 NA NA ...
+##  $ MiscVal      : int  0 0 0 0 0 700 0 350 0 0 ...
+##  $ MoSold       : int  2 5 9 2 12 10 8 11 4 1 ...
+##  $ YrSold       : int  2008 2007 2008 2006 2008 2009 2007 2009 2008 2008 ...
+##  $ SaleType     : Factor w/ 9 levels &quot;COD&quot;,&quot;Con&quot;,&quot;ConLD&quot;,..: 9 9 9 9 9 9 9 9 9 9 ...
+##  $ SaleCondition: Factor w/ 6 levels &quot;Abnorml&quot;,&quot;AdjLand&quot;,..: 5 5 5 1 5 5 5 5 1 5 ...
+##  $ SalePrice    : int  208500 181500 223500 140000 250000 143000 307000 200000 129900 118000 ...</code></pre>
+<p>从上面可以观察到，变量主要分为数值型变量和因子型变量。</p>
+<pre class="r"><code>bianliang &lt;- sapply(data,class)
+table(bianliang)</code></pre>
+<pre><code>## bianliang
+##  factor integer 
+##      43      38</code></pre>
+<p>数据中有43个因子型变量和38个整数型变量。</p>
+</div>
+<div id="变量处理" class="section level1">
+<h1>变量处理</h1>
+<p>通过对数据观察发现，存在许多缺失值，首先处理数据的缺失值。</p>
+<pre class="r"><code>queshizhi&lt;-sapply(data,function(x) sum(is.na(x)))
+
+# 按照缺失的大小进行排名
+queshi &lt;-sort(queshizhi,decreasing = T)
+queshi[queshi&gt;0]</code></pre>
+<pre><code>##       PoolQC  MiscFeature        Alley        Fence    SalePrice  FireplaceQu 
+##         2909         2814         2721         2348         1459         1420 
+##  LotFrontage  GarageYrBlt GarageFinish   GarageQual   GarageCond   GarageType 
+##          486          159          159          159          159          157 
+##     BsmtCond BsmtExposure     BsmtQual BsmtFinType2 BsmtFinType1   MasVnrType 
+##           82           82           81           80           79           24 
+##   MasVnrArea     MSZoning    Utilities BsmtFullBath BsmtHalfBath   Functional 
+##           23            4            2            2            2            2 
+##  Exterior1st  Exterior2nd   BsmtFinSF1   BsmtFinSF2    BsmtUnfSF  TotalBsmtSF 
+##            1            1            1            1            1            1 
+##   Electrical  KitchenQual   GarageCars   GarageArea     SaleType 
+##            1            1            1            1            1</code></pre>
+<p>我们进一步看这些缺失的变量的情况。</p>
+<pre class="r"><code>summary(data[,names(queshi)[queshi&gt;0]])</code></pre>
+<pre><code>##   PoolQC     MiscFeature  Alley        Fence        SalePrice      FireplaceQu
+##  Ex  :   4   Gar2:   5   Grvl: 120   GdPrv: 118   Min.   : 34900   Ex  :  43  
+##  Fa  :   2   Othr:   4   Pave:  78   GdWo : 112   1st Qu.:129975   Fa  :  74  
+##  Gd  :   4   Shed:  95   NA&#39;s:2721   MnPrv: 329   Median :163000   Gd  : 744  
+##  NA&#39;s:2909   TenC:   1               MnWw :  12   Mean   :180921   Po  :  46  
+##              NA&#39;s:2814               NA&#39;s :2348   3rd Qu.:214000   TA  : 592  
+##                                                   Max.   :755000   NA&#39;s:1420  
+##                                                   NA&#39;s   :1459                
+##   LotFrontage      GarageYrBlt   GarageFinish GarageQual  GarageCond 
+##  Min.   : 21.00   Min.   :1895   Fin : 719    Ex  :   3   Ex  :   3  
+##  1st Qu.: 59.00   1st Qu.:1960   RFn : 811    Fa  : 124   Fa  :  74  
+##  Median : 68.00   Median :1979   Unf :1230    Gd  :  24   Gd  :  15  
+##  Mean   : 69.31   Mean   :1978   NA&#39;s: 159    Po  :   5   Po  :  14  
+##  3rd Qu.: 80.00   3rd Qu.:2002                TA  :2604   TA  :2654  
+##  Max.   :313.00   Max.   :2207                NA&#39;s: 159   NA&#39;s: 159  
+##  NA&#39;s   :486      NA&#39;s   :159                                        
+##    GarageType   BsmtCond    BsmtExposure BsmtQual    BsmtFinType2 BsmtFinType1
+##  2Types :  23   Fa  : 104   Av  : 418    Ex  : 258   ALQ :  52    ALQ :429    
+##  Attchd :1723   Gd  : 122   Gd  : 276    Fa  :  88   BLQ :  68    BLQ :269    
+##  Basment:  36   Po  :   5   Mn  : 239    Gd  :1209   GLQ :  34    GLQ :849    
+##  BuiltIn: 186   TA  :2606   No  :1904    TA  :1283   LwQ :  87    LwQ :154    
+##  CarPort:  15   NA&#39;s:  82   NA&#39;s:  82    NA&#39;s:  81   Rec : 105    Rec :288    
+##  Detchd : 779                                        Unf :2493    Unf :851    
+##  NA&#39;s   : 157                                        NA&#39;s:  80    NA&#39;s: 79    
+##    MasVnrType     MasVnrArea        MSZoning     Utilities     BsmtFullBath   
+##  BrkCmn :  25   Min.   :   0.0   C (all):  25   AllPub:2916   Min.   :0.0000  
+##  BrkFace: 879   1st Qu.:   0.0   FV     : 139   NoSeWa:   1   1st Qu.:0.0000  
+##  None   :1742   Median :   0.0   RH     :  26   NA&#39;s  :   2   Median :0.0000  
+##  Stone  : 249   Mean   : 102.2   RL     :2265                 Mean   :0.4299  
+##  NA&#39;s   :  24   3rd Qu.: 164.0   RM     : 460                 3rd Qu.:1.0000  
+##                 Max.   :1600.0   NA&#39;s   :   4                 Max.   :3.0000  
+##                 NA&#39;s   :23                                    NA&#39;s   :2       
+##   BsmtHalfBath       Functional    Exterior1st    Exterior2nd  
+##  Min.   :0.00000   Typ    :2717   VinylSd:1025   VinylSd:1014  
+##  1st Qu.:0.00000   Min2   :  70   MetalSd: 450   MetalSd: 447  
+##  Median :0.00000   Min1   :  65   HdBoard: 442   HdBoard: 406  
+##  Mean   :0.06136   Mod    :  35   Wd Sdng: 411   Wd Sdng: 391  
+##  3rd Qu.:0.00000   Maj1   :  19   Plywood: 221   Plywood: 270  
+##  Max.   :2.00000   (Other):  11   (Other): 369   (Other): 390  
+##  NA&#39;s   :2         NA&#39;s   :   2   NA&#39;s   :   1   NA&#39;s   :   1  
+##    BsmtFinSF1       BsmtFinSF2        BsmtUnfSF       TotalBsmtSF    
+##  Min.   :   0.0   Min.   :   0.00   Min.   :   0.0   Min.   :   0.0  
+##  1st Qu.:   0.0   1st Qu.:   0.00   1st Qu.: 220.0   1st Qu.: 793.0  
+##  Median : 368.5   Median :   0.00   Median : 467.0   Median : 989.5  
+##  Mean   : 441.4   Mean   :  49.58   Mean   : 560.8   Mean   :1051.8  
+##  3rd Qu.: 733.0   3rd Qu.:   0.00   3rd Qu.: 805.5   3rd Qu.:1302.0  
+##  Max.   :5644.0   Max.   :1526.00   Max.   :2336.0   Max.   :6110.0  
+##  NA&#39;s   :1        NA&#39;s   :1         NA&#39;s   :1        NA&#39;s   :1       
+##  Electrical   KitchenQual   GarageCars      GarageArea        SaleType   
+##  FuseA: 188   Ex  : 205   Min.   :0.000   Min.   :   0.0   WD     :2525  
+##  FuseF:  50   Fa  :  70   1st Qu.:1.000   1st Qu.: 320.0   New    : 239  
+##  FuseP:   8   Gd  :1151   Median :2.000   Median : 480.0   COD    :  87  
+##  Mix  :   1   TA  :1492   Mean   :1.767   Mean   : 472.9   ConLD  :  26  
+##  SBrkr:2671   NA&#39;s:   1   3rd Qu.:2.000   3rd Qu.: 576.0   CWD    :  12  
+##  NA&#39;s :   1               Max.   :5.000   Max.   :1488.0   (Other):  29  
+##                           NA&#39;s   :1       NA&#39;s   :1        NA&#39;s   :   1</code></pre>
+<p>对于缺失数据很多的PoolQC、MiscFeature、Alley、Fence、FireplaceQu这些变量，无法进行插值补充，我们直接去除这些变量。</p>
+<pre class="r"><code># 去除如下变量
+quchu &lt;- names(data) %in% c(&quot;PoolQC&quot;,&quot;MiscFeature&quot;,&quot;Alley&quot;,&quot;Fence&quot;,&quot;FireplaceQu&quot;)
+data &lt;- data[!quchu]</code></pre>
+<p>去除了NA值较多的变量之后，对Garage系列的变量和Bsmt系列的变量通过网上搜索发现这是车库和地下室的相关数据，对这些NA值我们使用NONE来替代缺失值。</p>
+<p>通过查询描述文件得知，GarrageYrBLt为车库建造年份，使用房子的建造年份代替。</p>
+<pre class="r"><code>data$GarageYrBlt[is.na(data$GarageYrBlt)] &lt;- data$YearBuilt[is.na(data$GarageYrBlt)]</code></pre>
+<div id="补全缺失值" class="section level2">
+<h2>补全缺失值</h2>
+<p>对LotFrontage是房屋到街道的距离，用中位数来填充缺失。</p>
+<pre class="r"><code>data$LotFrontage[is.na(data$LotFrontage)] &lt;- median(data$LotFrontage, na.rm = T)</code></pre>
+<p>MasVnrType是外墙的装饰材料，对售价的影响不大。用NONE补充</p>
+<pre class="r"><code>data[[&quot;MasVnrType&quot;]][is.na(data[[&quot;MasVnrType&quot;]])] = &quot;None&quot;</code></pre>
+<p>MasVnrArea是外墙装饰材料的面积，用数值0来填充。</p>
+<pre class="r"><code>data[[&quot;MasVnrArea&quot;]][is.na(data[[&quot;MasVnrArea&quot;]])] &lt;- 0</code></pre>
+<p>Utilities 没有分析的意义，直接去除</p>
+<pre class="r"><code>data$Utilities &lt;- NULL</code></pre>
+<p>变量 BsmtFullBath BsmtHalfBath BsmtFinSF1 BsmtFinSF2 BsmtUnfSF TotalBsmtSF GarageCars GarageArea 是和车库和地下室相关的变量，是数值型变量，补充为0就可以。</p>
+<pre class="r"><code>drop &lt;- c(&quot;BsmtFullBath&quot;,&quot;BsmtHalfBath&quot;,&quot;BsmtFinSF1&quot;,&quot;BsmtFinSF2&quot;,&quot;BsmtUnfSF&quot;,&quot;TotalBsmtSF&quot;,&quot;GarageCars&quot;,&quot;GarageArea&quot;)
+for (x in drop )    data[[x]][is.na(data[[x]])] &lt;- 0</code></pre>
+<p>MSZoning,Functional,Exterior1st,Exterior2nd,KitchenQual,Electrical,SaleType,这些是因子型变量，并且缺失值很少，用最高频率的因子来替代即可。</p>
+<pre class="r"><code>tidai &lt;- c(&quot;MSZoning&quot;,&quot;Functional&quot;,&quot;Exterior1st&quot;,&quot;Exterior2nd&quot;,&quot;KitchenQual&quot;,&quot;Electrical&quot;,&quot;SaleType&quot;)
+for (x in tidai )    data[[x]][is.na(data[[x]])] &lt;- levels(data[[x]])[which.max(table(data[[x]]))]</code></pre>
+<pre class="r"><code># 通过SalePrice是否为空来区分训练集和测试集
+train &lt;- data[!is.na(data$SalePrice), ]
+test &lt;- data[is.na(data$SalePrice), ]</code></pre>
+</div>
+</div>
+<div id="建立模型" class="section level1">
+<h1>建立模型</h1>
+<p>数据中自变量很多，根据常识我们要从自变量中选出对房价影响最大的因素。我们可以首先人工筛选出一些对房价影响大的因素，然后再添加新的变量来看是否对模型会有改善。
+在国内的话，房价的主要影响因素有房子面积、房子所在的区域、小区等，房龄、房型（小高层、多层、别墅等）、特殊场景（地铁房、学区房等）、装修等也会影响价格。对美国房价来说其实也差不多。因此我们选择如下的变量作为观测。</p>
+<ul>
+<li>LotArea 房子的面积</li>
+<li>Neighborhood 城市街区 用来初步代替 区域、小区</li>
+<li>Condition1 Condition2 附近的交通情况</li>
+<li>BldgType 房屋类型 独栋别墅、联排别墅</li>
+<li>HouseStyle 房子的层数</li>
+<li>YearBuilt 房子建造的年份</li>
+<li>YearRemodAdd： 房子的改造年份</li>
+<li>OverallQual： 房子整体质量，考量材料和完成度</li>
+<li>OverallCond：房子整体条件</li>
+</ul>
+<div id="观察变量关系" class="section level2">
+<h2>观察变量关系</h2>
+<p>写出函数来观察因子型变量和数值型变量的分布图。</p>
+<pre class="r"><code># 加载库
+library(ggplot2)
+library(Rmisc)</code></pre>
+<pre><code>## 载入需要的程辑包：lattice</code></pre>
+<pre><code>## 载入需要的程辑包：plyr</code></pre>
+<pre class="r"><code># 将对于因子变量画图
+plot2_factor &lt;- function(var_name){
+    plots &lt;- list()
+    plots[[1]] &lt;- ggplot(train, aes_string(x = var_name, fill = var_name) ) + 
+        geom_bar() +
+        guides(fill = FALSE) +
+            ggtitle(paste(&quot;count of &quot;, var_name)) +
+            theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    plots[[2]] &lt;- ggplot(train, aes_string(x = var_name, y = &quot;SalePrice&quot;, fill = var_name) ) +
+        geom_boxplot() +
+        guides(fill = FALSE) +
+        ggtitle(paste( var_name, &quot; vs SalePrice&quot;)) +
+        theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    multiplot(plotlist = plots, cols = 2)   
+}
+
+# 对于连续数字变量画图
+plot2_number &lt;- function(var_name){
+    plots &lt;- list()
+    plots[[1]] &lt;- ggplot(train, aes_string(x = var_name) ) + 
+        geom_histogram() +
+        ggtitle(paste(&quot;count of &quot;, var_name))
+
+    plots[[2]] &lt;- ggplot(train, aes_string(x = var_name, y = &quot;SalePrice&quot;) ) +
+        geom_point() +
+        ggtitle(paste( var_name, &quot; vs SalePrice&quot;))
+
+    multiplot(plotlist = plots, cols = 2)   
+}</code></pre>
+<p>首先观察街区和房间的关系图。</p>
+<pre class="r"><code>plot2_factor(&quot;Neighborhood&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>通过上图可以看出不同的社区，房价差异很大，因此这个变量应该是影响比较大的。</p>
+<pre class="r"><code>plot2_number(&quot;YearBuilt&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>通过对建筑年限这一数值型变量进行绘图研究看出，售价和建筑年限也有强烈的线性关系，说明该变量是有意义的。</p>
+<pre class="r"><code>plot2_number(&quot;OverallQual&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>从上图看出装修越好的房子价格越高。</p>
+</div>
+<div id="各个变量之间的相关性" class="section level2">
+<h2>各个变量之间的相关性</h2>
+<pre class="r"><code>library(corrgram)</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;corrgram&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:plyr&#39;:
+## 
+##     baseball</code></pre>
+<pre><code>## The following object is masked from &#39;package:lattice&#39;:
+## 
+##     panel.fill</code></pre>
+<pre class="r"><code>sel &lt;- c(&quot;LotArea&quot;,&quot;Neighborhood&quot;,&quot;BldgType&quot;,&quot;HouseStyle&quot;,&quot;YearBuilt&quot;,&quot;YearRemodAdd&quot;,&quot;OverallQual&quot;,&quot;OverallCond&quot;,&quot;MSZoning&quot;)
+
+corrgram(train[,sel], order=TRUE, lower.panel=panel.shade, upper.panel=panel.pie, text.panel=panel.txt)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+<div id="训练线性模型" class="section level2">
+<h2>训练线性模型</h2>
+<pre class="r"><code>tezheng &lt;- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual + OverallCond
+
+# 训练模型
+lm1 &lt;- lm(tezheng, train)
+
+# 查看模型概要
+summary(lm1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tezheng, data = train)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -208970  -20882   -2917   15544  351199 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         -1.455e+06  1.850e+05  -7.862 7.42e-15 ***
+## LotArea              1.084e+00  1.156e-01   9.375  &lt; 2e-16 ***
+## NeighborhoodBlueste -1.068e+03  2.953e+04  -0.036 0.971141    
+## NeighborhoodBrDale  -1.440e+04  1.518e+04  -0.949 0.342806    
+## NeighborhoodBrkSide -1.876e+04  1.278e+04  -1.468 0.142460    
+## NeighborhoodClearCr -2.352e+03  1.332e+04  -0.177 0.859842    
+## NeighborhoodCollgCr -2.917e+04  1.086e+04  -2.685 0.007335 ** 
+## NeighborhoodCrawfor  1.747e+04  1.246e+04   1.402 0.161225    
+## NeighborhoodEdwards -2.813e+04  1.165e+04  -2.414 0.015924 *  
+## NeighborhoodGilbert -4.030e+04  1.157e+04  -3.484 0.000508 ***
+## NeighborhoodIDOTRR  -3.357e+04  1.343e+04  -2.499 0.012570 *  
+## NeighborhoodMeadowV  1.338e+04  1.446e+04   0.925 0.354867    
+## NeighborhoodMitchel -2.819e+04  1.196e+04  -2.356 0.018617 *  
+## NeighborhoodNAmes   -2.202e+04  1.130e+04  -1.950 0.051426 .  
+## NeighborhoodNoRidge  6.105e+04  1.226e+04   4.980 7.13e-07 ***
+## NeighborhoodNPkVill  6.340e+03  1.650e+04   0.384 0.700928    
+## NeighborhoodNridgHt  4.876e+04  1.104e+04   4.417 1.08e-05 ***
+## NeighborhoodNWAmes  -2.126e+04  1.166e+04  -1.823 0.068457 .  
+## NeighborhoodOldTown -2.915e+04  1.243e+04  -2.344 0.019194 *  
+## NeighborhoodSawyer  -2.575e+04  1.188e+04  -2.168 0.030350 *  
+## NeighborhoodSawyerW -2.224e+04  1.154e+04  -1.927 0.054234 .  
+## NeighborhoodSomerst -1.228e+04  1.093e+04  -1.123 0.261764    
+## NeighborhoodStoneBr  5.984e+04  1.249e+04   4.790 1.84e-06 ***
+## NeighborhoodSWISU   -2.365e+04  1.433e+04  -1.651 0.099024 .  
+## NeighborhoodTimber  -1.326e+04  1.236e+04  -1.073 0.283489    
+## NeighborhoodVeenker  2.303e+04  1.555e+04   1.481 0.138905    
+## BldgType2fmCon       1.230e+03  7.413e+03   0.166 0.868218    
+## BldgTypeDuplex      -7.231e+02  5.831e+03  -0.124 0.901330    
+## BldgTypeTwnhs       -6.675e+04  7.811e+03  -8.546  &lt; 2e-16 ***
+## BldgTypeTwnhsE      -4.916e+04  4.892e+03 -10.049  &lt; 2e-16 ***
+## HouseStyle1.5Unf    -2.835e+04  1.102e+04  -2.573 0.010184 *  
+## HouseStyle1Story    -3.981e+03  3.977e+03  -1.001 0.316972    
+## HouseStyle2.5Fin     5.328e+04  1.472e+04   3.619 0.000306 ***
+## HouseStyle2.5Unf    -4.606e+03  1.250e+04  -0.368 0.712613    
+## HouseStyle2Story     4.069e+03  4.205e+03   0.968 0.333393    
+## HouseStyleSFoyer    -1.173e+04  7.791e+03  -1.505 0.132424    
+## HouseStyleSLvl      -6.438e+03  6.197e+03  -1.039 0.299077    
+## YearBuilt            4.285e+02  8.428e+01   5.084 4.20e-07 ***
+## YearRemodAdd         3.114e+02  7.505e+01   4.149 3.53e-05 ***
+## OverallQual          2.849e+04  1.187e+03  24.010  &lt; 2e-16 ***
+## OverallCond          1.613e+03  1.150e+03   1.402 0.161035    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 38880 on 1419 degrees of freedom
+## Multiple R-squared:  0.7671, Adjusted R-squared:  0.7605 
+## F-statistic: 116.8 on 40 and 1419 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>模型中部分特征没有显著，但是模型整体的F检验通过，说明该模型还是可以的。模型调整后的<span class="math inline">\(R^2=0.7605\)</span>效果还不错。</p>
+</div>
+<div id="变量选择" class="section level2">
+<h2>变量选择</h2>
+<p>首先进行人工变量选择，去除不显著的变量。去掉OverallCond，重新进行拟合</p>
+<pre class="r"><code># 初步决定的 lm.base 模型的变量
+fm.base &lt;- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual
+
+# 训练模型
+lm.base &lt;- lm(fm.base, train)
+summary(lm.base)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = fm.base, data = train)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -209817  -20321   -2822   15210  352218 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         -1.464e+06  1.850e+05  -7.914 4.98e-15 ***
+## LotArea              1.081e+00  1.156e-01   9.352  &lt; 2e-16 ***
+## NeighborhoodBlueste  7.266e+02  2.951e+04   0.025 0.980358    
+## NeighborhoodBrDale  -1.362e+04  1.517e+04  -0.898 0.369408    
+## NeighborhoodBrkSide -1.798e+04  1.277e+04  -1.408 0.159440    
+## NeighborhoodClearCr -1.805e+03  1.331e+04  -0.136 0.892207    
+## NeighborhoodCollgCr -2.898e+04  1.087e+04  -2.667 0.007744 ** 
+## NeighborhoodCrawfor  1.883e+04  1.243e+04   1.516 0.129852    
+## NeighborhoodEdwards -2.782e+04  1.166e+04  -2.387 0.017109 *  
+## NeighborhoodGilbert -4.028e+04  1.157e+04  -3.481 0.000515 ***
+## NeighborhoodIDOTRR  -3.359e+04  1.344e+04  -2.499 0.012553 *  
+## NeighborhoodMeadowV  1.425e+04  1.445e+04   0.986 0.324151    
+## NeighborhoodMitchel -2.759e+04  1.196e+04  -2.307 0.021210 *  
+## NeighborhoodNAmes   -2.091e+04  1.127e+04  -1.855 0.063807 .  
+## NeighborhoodNoRidge  6.106e+04  1.226e+04   4.980 7.14e-07 ***
+## NeighborhoodNPkVill  7.526e+03  1.649e+04   0.456 0.648117    
+## NeighborhoodNridgHt  4.836e+04  1.104e+04   4.380 1.27e-05 ***
+## NeighborhoodNWAmes  -1.993e+04  1.163e+04  -1.714 0.086670 .  
+## NeighborhoodOldTown -2.849e+04  1.243e+04  -2.292 0.022025 *  
+## NeighborhoodSawyer  -2.475e+04  1.186e+04  -2.086 0.037120 *  
+## NeighborhoodSawyerW -2.201e+04  1.155e+04  -1.907 0.056764 .  
+## NeighborhoodSomerst -1.248e+04  1.094e+04  -1.141 0.254229    
+## NeighborhoodStoneBr  5.963e+04  1.250e+04   4.772 2.01e-06 ***
+## NeighborhoodSWISU   -2.346e+04  1.433e+04  -1.637 0.101780    
+## NeighborhoodTimber  -1.325e+04  1.236e+04  -1.072 0.283915    
+## NeighborhoodVeenker  2.475e+04  1.551e+04   1.596 0.110733    
+## BldgType2fmCon       7.637e+02  7.408e+03   0.103 0.917900    
+## BldgTypeDuplex      -1.566e+03  5.802e+03  -0.270 0.787285    
+## BldgTypeTwnhs       -6.658e+04  7.813e+03  -8.522  &lt; 2e-16 ***
+## BldgTypeTwnhsE      -4.951e+04  4.888e+03 -10.129  &lt; 2e-16 ***
+## HouseStyle1.5Unf    -2.800e+04  1.102e+04  -2.541 0.011173 *  
+## HouseStyle1Story    -4.114e+03  3.977e+03  -1.035 0.301043    
+## HouseStyle2.5Fin     5.310e+04  1.473e+04   3.606 0.000322 ***
+## HouseStyle2.5Unf    -5.807e+03  1.248e+04  -0.465 0.641658    
+## HouseStyle2Story     3.910e+03  4.205e+03   0.930 0.352516    
+## HouseStyleSFoyer    -1.110e+04  7.781e+03  -1.427 0.153881    
+## HouseStyleSLvl      -6.096e+03  6.195e+03  -0.984 0.325288    
+## YearBuilt            3.934e+02  8.052e+01   4.886 1.15e-06 ***
+## YearRemodAdd         3.548e+02  6.840e+01   5.186 2.46e-07 ***
+## OverallQual          2.863e+04  1.183e+03  24.206  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 38890 on 1420 degrees of freedom
+## Multiple R-squared:  0.7668, Adjusted R-squared:  0.7603 
+## F-statistic: 119.7 on 39 and 1420 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>发现模型的效果没有显著提升。</p>
+</div>
+<div id="变量选择方法" class="section level2">
+<h2>变量选择方法</h2>
+<p>传统的变量选择方法有很多，例如<code>LASSO</code>，<code>Ridge</code>等方法，这里我们使用<code>Lasso</code>,随机森林和梯度下降法来进行变量选择，提升模型性能。</p>
+<pre class="r"><code># 安装
+library(glmnet)</code></pre>
+<pre><code>## 载入需要的程辑包：Matrix</code></pre>
+<pre><code>## Loaded glmnet 4.1-1</code></pre>
+<pre class="r"><code># 准备数据
+formula &lt;- as.formula( log(SalePrice)~ .-Id )
+
+# model.matrix 会自动将分类变量变成哑变量
+x &lt;- model.matrix(formula, train)
+y &lt;- log(train$SalePrice)
+
+#执行 lasso 
+set.seed(999)
+lm.lasso &lt;- cv.glmnet(x, y, alpha=1)
+
+# 画图
+plot(lm.lasso)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code># 得到各变量的系数
+coef(lm.lasso, s = &quot;lambda.min&quot;)</code></pre>
+<pre><code>## 242 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                  1
+## (Intercept)           7.314346e+00
+## (Intercept)           .           
+## MSSubClass           -3.089056e-04
+## MSZoningFV            1.793795e-02
+## MSZoningRH            .           
+## MSZoningRL            4.132766e-02
+## MSZoningRM            .           
+## LotFrontage           .           
+## LotArea               1.272041e-06
+## StreetPave            4.921358e-02
+## LotShapeIR2           1.071380e-02
+## LotShapeIR3          -9.683435e-02
+## LotShapeReg           .           
+## LandContourHLS        .           
+## LandContourLow        .           
+## LandContourLvl        .           
+## LotConfigCulDSac      3.543690e-02
+## LotConfigFR2          .           
+## LotConfigFR3          .           
+## LotConfigInside       .           
+## LandSlopeMod          .           
+## LandSlopeSev          .           
+## NeighborhoodBlueste   .           
+## NeighborhoodBrDale   -1.493220e-02
+## NeighborhoodBrkSide   .           
+## NeighborhoodClearCr   3.747801e-02
+## NeighborhoodCollgCr   .           
+## NeighborhoodCrawfor   1.115702e-01
+## NeighborhoodEdwards  -4.439143e-02
+## NeighborhoodGilbert   .           
+## NeighborhoodIDOTRR   -6.746018e-02
+## NeighborhoodMeadowV  -7.649854e-02
+## NeighborhoodMitchel   .           
+## NeighborhoodNAmes     .           
+## NeighborhoodNoRidge   5.440480e-02
+## NeighborhoodNPkVill   .           
+## NeighborhoodNridgHt   1.179915e-01
+## NeighborhoodNWAmes    .           
+## NeighborhoodOldTown  -2.833497e-02
+## NeighborhoodSawyer    .           
+## NeighborhoodSawyerW   .           
+## NeighborhoodSomerst   6.349095e-02
+## NeighborhoodStoneBr   1.204762e-01
+## NeighborhoodSWISU     .           
+## NeighborhoodTimber    2.260192e-03
+## NeighborhoodVeenker   2.878460e-02
+## Condition1Feedr      -1.568548e-02
+## Condition1Norm        3.532074e-02
+## Condition1PosA        .           
+## Condition1PosN        .           
+## Condition1RRAe       -2.434992e-02
+## Condition1RRAn        .           
+## Condition1RRNe        .           
+## Condition1RRNn        .           
+## Condition2Feedr       .           
+## Condition2Norm        .           
+## Condition2PosA        .           
+## Condition2PosN       -5.253862e-01
+## Condition2RRAe        .           
+## Condition2RRAn        .           
+## Condition2RRNn        .           
+## BldgType2fmCon        .           
+## BldgTypeDuplex        .           
+## BldgTypeTwnhs        -7.598136e-02
+## BldgTypeTwnhsE       -1.805548e-02
+## HouseStyle1.5Unf      .           
+## HouseStyle1Story      .           
+## HouseStyle2.5Fin      .           
+## HouseStyle2.5Unf      .           
+## HouseStyle2Story      .           
+## HouseStyleSFoyer      .           
+## HouseStyleSLvl        .           
+## OverallQual           6.845347e-02
+## OverallCond           3.219936e-02
+## YearBuilt             1.274539e-03
+## YearRemodAdd          8.437361e-04
+## RoofStyleGable       -5.642072e-03
+## RoofStyleGambrel      .           
+## RoofStyleHip          .           
+## RoofStyleMansard      .           
+## RoofStyleShed         .           
+## RoofMatlCompShg       8.744853e-03
+## RoofMatlMembran       .           
+## RoofMatlMetal         .           
+## RoofMatlRoll          .           
+## RoofMatlTar&amp;Grv       .           
+## RoofMatlWdShake       .           
+## RoofMatlWdShngl       7.458154e-02
+## Exterior1stAsphShn    .           
+## Exterior1stBrkComm   -1.345774e-01
+## Exterior1stBrkFace    4.770749e-02
+## Exterior1stCBlock     .           
+## Exterior1stCemntBd    .           
+## Exterior1stHdBoard   -8.584669e-03
+## Exterior1stImStucc    .           
+## Exterior1stMetalSd    .           
+## Exterior1stPlywood    .           
+## Exterior1stStone      .           
+## Exterior1stStucco     .           
+## Exterior1stVinylSd    .           
+## Exterior1stWd Sdng   -6.333826e-03
+## Exterior1stWdShing    .           
+## Exterior2ndAsphShn    .           
+## Exterior2ndBrk Cmn    .           
+## Exterior2ndBrkFace    .           
+## Exterior2ndCBlock     .           
+## Exterior2ndCmentBd    1.903051e-03
+## Exterior2ndHdBoard    .           
+## Exterior2ndImStucc    .           
+## Exterior2ndMetalSd    .           
+## Exterior2ndOther      .           
+## Exterior2ndPlywood    .           
+## Exterior2ndStone      .           
+## Exterior2ndStucco    -4.652564e-02
+## Exterior2ndVinylSd    .           
+## Exterior2ndWd Sdng    .           
+## Exterior2ndWd Shng   -1.387069e-02
+## MasVnrTypeBrkFace     .           
+## MasVnrTypeNone        .           
+## MasVnrTypeStone       .           
+## MasVnrArea            .           
+## ExterQualFa          -1.044328e-02
+## ExterQualGd           .           
+## ExterQualTA          -6.848606e-03
+## ExterCondFa          -9.876932e-03
+## ExterCondGd           .           
+## ExterCondPo           .           
+## ExterCondTA           4.288596e-03
+## FoundationCBlock      .           
+## FoundationPConc       2.610683e-02
+## FoundationSlab       -2.033377e-03
+## FoundationStone       .           
+## FoundationWood        .           
+## BsmtQualFa            .           
+## BsmtQualGd            .           
+## BsmtQualTA           -2.813238e-04
+## BsmtQualNone         -3.399457e-03
+## BsmtCondGd            .           
+## BsmtCondPo            .           
+## BsmtCondTA            3.624419e-03
+## BsmtCondNone          .           
+## BsmtExposureGd        4.858853e-02
+## BsmtExposureMn        .           
+## BsmtExposureNo       -6.556593e-03
+## BsmtExposureNone     -3.795778e-02
+## BsmtFinType1BLQ       .           
+## BsmtFinType1GLQ       9.606824e-03
+## BsmtFinType1LwQ       .           
+## BsmtFinType1Rec       .           
+## BsmtFinType1Unf      -3.321896e-02
+## BsmtFinType1None      .           
+## BsmtFinSF1            .           
+## BsmtFinType2BLQ      -7.694026e-03
+## BsmtFinType2GLQ       .           
+## BsmtFinType2LwQ       .           
+## BsmtFinType2Rec       .           
+## BsmtFinType2Unf       .           
+## BsmtFinType2None     -2.374994e-02
+## BsmtFinSF2            .           
+## BsmtUnfSF             .           
+## TotalBsmtSF           2.725149e-05
+## HeatingGasA           .           
+## HeatingGasW           6.541262e-02
+## HeatingGrav          -1.079210e-01
+## HeatingOthW           .           
+## HeatingWall           .           
+## HeatingQCFa           .           
+## HeatingQCGd          -2.803107e-03
+## HeatingQCPo           .           
+## HeatingQCTA          -1.893740e-02
+## CentralAirY           6.505505e-02
+## ElectricalFuseF       .           
+## ElectricalFuseP       .           
+## ElectricalMix         .           
+## ElectricalSBrkr       .           
+## X1stFlrSF             2.739845e-05
+## X2ndFlrSF             .           
+## LowQualFinSF          .           
+## GrLivArea             1.960863e-04
+## BsmtFullBath          4.369629e-02
+## BsmtHalfBath          .           
+## FullBath              2.498523e-02
+## HalfBath              1.102765e-02
+## BedroomAbvGr          .           
+## KitchenAbvGr         -2.694865e-02
+## KitchenQualFa         .           
+## KitchenQualGd         .           
+## KitchenQualTA        -7.346020e-03
+## TotRmsAbvGrd          8.445023e-03
+## FunctionalMaj2       -1.661537e-01
+## FunctionalMin1        .           
+## FunctionalMin2        .           
+## FunctionalMod         .           
+## FunctionalSev        -1.691674e-01
+## FunctionalTyp         3.674019e-02
+## Fireplaces            2.925835e-02
+## GarageTypeAttchd      1.017935e-02
+## GarageTypeBasment    -2.805227e-04
+## GarageTypeBuiltIn     .           
+## GarageTypeCarPort     .           
+## GarageTypeDetchd      .           
+## GarageTypeNone       -5.483381e-04
+## GarageYrBlt           .           
+## GarageFinishRFn       .           
+## GarageFinishUnf      -3.452388e-03
+## GarageFinishNone     -6.132096e-05
+## GarageCars            5.606530e-02
+## GarageArea            3.428652e-05
+## GarageQualFa         -9.605669e-03
+## GarageQualGd          1.663474e-02
+## GarageQualPo          .           
+## GarageQualTA          .           
+## GarageQualNone       -2.467408e-04
+## GarageCondFa         -1.397724e-02
+## GarageCondGd          .           
+## GarageCondPo          .           
+## GarageCondTA          .           
+## GarageCondNone       -2.685390e-06
+## PavedDriveP           .           
+## PavedDriveY           1.160351e-02
+## WoodDeckSF            9.033916e-05
+## OpenPorchSF           .           
+## EnclosedPorch         2.864247e-06
+## X3SsnPorch            1.227765e-05
+## ScreenPorch           2.102909e-04
+## PoolArea             -6.262337e-05
+## MiscVal               .           
+## MoSold                .           
+## YrSold               -4.603035e-04
+## SaleTypeCon           .           
+## SaleTypeConLD         .           
+## SaleTypeConLI         .           
+## SaleTypeConLw         .           
+## SaleTypeCWD           .           
+## SaleTypeNew           7.765443e-02
+## SaleTypeOth           .           
+## SaleTypeWD            .           
+## SaleConditionAdjLand  .           
+## SaleConditionAlloca   .           
+## SaleConditionFamily   .           
+## SaleConditionNormal   3.497182e-02
+## SaleConditionPartial  .</code></pre>
+<pre class="r"><code>#由于 SalePrice 为 NA 无法数组化
+test$SalePrice &lt;- 1
+test_x &lt;- model.matrix(formula, test)
+
+# 预测、输出结果
+lm.pred &lt;- predict(lm.lasso, newx = test_x, s = &quot;lambda.min&quot;)
+res &lt;- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = &quot;res_lasso.csv&quot;, row.names = FALSE)</code></pre>
+<p>使用随机森林方法进行回归建模.</p>
+<pre class="r"><code>library(randomForest)
+library(caret)
+
+#设定种子
+set.seed(223)
+
+# 设定控制参数
+# method = &quot;cv&quot; -- k 折交叉验证 
+# number -- K 折交叉验证中的 K， number=10 则是 10 折交叉验证
+# repeats -- 交叉验证的次数
+# verboseIter -- 打印训练日志
+ctrl &lt;- trainControl(method = &quot;cv&quot;, number = 10, repeats = 20, verboseIter = TRUE)
+
+# 训练模型
+lm.rf &lt;- train(log(SalePrice)~ .-Id, data = train,  method = &quot;rf&quot;,  trControl = ctrl,  tuneLength = 3)
+
+# 输出结果 
+#write_res(lm.rf, test, &#39;rf&#39;)
+
+# 输出结果
+lm.pred &lt;- predict(lm.rf, test)
+res &lt;- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = &quot;res_rf.csv&quot;, row.names = FALSE)</code></pre>
+<p>使用梯度下降法进行模型建立。</p>
+<pre class="r"><code>lm.gbm &lt;- train(log(SalePrice)~ .-Id, data = train,  method = &quot;gbm&quot;,  trControl = ctrl)
+
+# 输出结果 
+lm.pred &lt;- predict(lm.gbm, test)
+res &lt;- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = &quot;res_gbm.csv&quot;, row.names = FALSE)</code></pre>
+<p>最终我们得到了各个方法进行预测的残差，并且进行计算得到了各个方法的RES值，通过对比可以得出相对最好的方法，想要进一步提升模型的性能，可以使用bagging,stacking等模型融合的方法来进行改进。</p>
+</div>
+</div>

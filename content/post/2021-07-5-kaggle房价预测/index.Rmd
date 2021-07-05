@@ -1,0 +1,331 @@
+---
+title: "kaggle房价预测"
+author: "Feng Yu qi"
+date: '2021-07-05'
+slug: kaggle housing price predict
+categories:
+- R
+- Rmakrdown
+- table
+tags:
+- share
+- machinelearning
+---
+
+
+最近在网上尝试练习使用了kaggle中的高级房价预测，这个问题本质上回归问题，使用机器学习的方法和技巧可以较好的解决这一类问题，最终本文使用`BeSS`这一方法来处理该问题，$MSE$近乎为0，效果不错，故和大家分享。这偏文章的前面受到该[博客](https://cloud.tencent.com/developer/article/1005033)的启发，特此感谢。
+
+
+# 探索性分析
+
+首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+```{r include=FALSE}
+train <- read.csv("train.csv",stringsAsFactors = TRUE)
+test <- read.csv("test.csv",stringsAsFactors = TRUE)
+test$SalePrice <- NA
+data <- rbind(train, test)
+library(knitr)
+```
+
+```{r}
+str(data)
+```
+
+从上面可以观察到，变量主要分为数值型变量和因子型变量。
+```{r}
+bianliang <- sapply(data,class)
+table(bianliang)
+```
+
+数据中有43个因子型变量和38个整数型变量。
+
+
+
+# 变量处理
+
+通过对数据观察发现，存在许多缺失值，首先处理数据的缺失值。
+```{r}
+queshizhi<-sapply(data,function(x) sum(is.na(x)))
+
+# 按照缺失的大小进行排名
+queshi <-sort(queshizhi,decreasing = T)
+queshi[queshi>0]
+```
+
+我们进一步看这些缺失的变量的情况。
+```{r}
+summary(data[,names(queshi)[queshi>0]])
+```
+
+对于缺失数据很多的PoolQC、MiscFeature、Alley、Fence、FireplaceQu这些变量，无法进行插值补充，我们直接去除这些变量。
+```{r}
+# 去除如下变量
+quchu <- names(data) %in% c("PoolQC","MiscFeature","Alley","Fence","FireplaceQu")
+data <- data[!quchu]
+```
+
+
+去除了NA值较多的变量之后，对Garage系列的变量和Bsmt系列的变量通过网上搜索发现这是车库和地下室的相关数据，对这些NA值我们使用NONE来替代缺失值。
+
+```{r echo=FALSE, warning=FALSE}
+Garage <- c("GarageType","GarageQual","GarageCond","GarageFinish")
+Bsmt <- c("BsmtExposure","BsmtFinType2","BsmtQual","BsmtCond","BsmtFinType1")
+for (x in c(Garage, Bsmt) )
+{
+data[[x]] <- factor( data[[x]], levels= c(levels(data[[x]]),c('None')))
+data[[x]][is.na(data[[x]])] <- "None"
+}
+```
+
+通过查询描述文件得知，GarrageYrBLt为车库建造年份，使用房子的建造年份代替。
+```{r}
+data$GarageYrBlt[is.na(data$GarageYrBlt)] <- data$YearBuilt[is.na(data$GarageYrBlt)]
+```
+
+
+## 补全缺失值
+
+对LotFrontage是房屋到街道的距离，用中位数来填充缺失。
+```{r}
+data$LotFrontage[is.na(data$LotFrontage)] <- median(data$LotFrontage, na.rm = T)
+```
+
+MasVnrType是外墙的装饰材料，对售价的影响不大。用NONE补充
+```{r}
+data[["MasVnrType"]][is.na(data[["MasVnrType"]])] = "None"
+```
+
+
+MasVnrArea是外墙装饰材料的面积，用数值0来填充。
+```{r}
+data[["MasVnrArea"]][is.na(data[["MasVnrArea"]])] <- 0
+```
+
+ Utilities 没有分析的意义，直接去除
+```{r}
+data$Utilities <- NULL
+```
+
+
+变量 BsmtFullBath BsmtHalfBath BsmtFinSF1 BsmtFinSF2 BsmtUnfSF TotalBsmtSF GarageCars GarageArea 是和车库和地下室相关的变量，是数值型变量，补充为0就可以。
+
+```{r}
+drop <- c("BsmtFullBath","BsmtHalfBath","BsmtFinSF1","BsmtFinSF2","BsmtUnfSF","TotalBsmtSF","GarageCars","GarageArea")
+for (x in drop )    data[[x]][is.na(data[[x]])] <- 0
+```
+
+
+MSZoning,Functional,Exterior1st,Exterior2nd,KitchenQual,Electrical,SaleType,这些是因子型变量，并且缺失值很少，用最高频率的因子来替代即可。
+```{r}
+tidai <- c("MSZoning","Functional","Exterior1st","Exterior2nd","KitchenQual","Electrical","SaleType")
+for (x in tidai )    data[[x]][is.na(data[[x]])] <- levels(data[[x]])[which.max(table(data[[x]]))]
+```
+
+```{r}
+# 通过SalePrice是否为空来区分训练集和测试集
+train <- data[!is.na(data$SalePrice), ]
+test <- data[is.na(data$SalePrice), ]
+```
+
+
+
+# 建立模型
+
+数据中自变量很多，根据常识我们要从自变量中选出对房价影响最大的因素。我们可以首先人工筛选出一些对房价影响大的因素，然后再添加新的变量来看是否对模型会有改善。
+在国内的话，房价的主要影响因素有房子面积、房子所在的区域、小区等，房龄、房型（小高层、多层、别墅等）、特殊场景（地铁房、学区房等）、装修等也会影响价格。对美国房价来说其实也差不多。因此我们选择如下的变量作为观测。
+
+- LotArea 房子的面积
+- Neighborhood 城市街区 用来初步代替 区域、小区
+- Condition1 Condition2 附近的交通情况
+- BldgType 房屋类型 独栋别墅、联排别墅
+- HouseStyle 房子的层数
+- YearBuilt 房子建造的年份
+- YearRemodAdd： 房子的改造年份
+- OverallQual： 房子整体质量，考量材料和完成度
+- OverallCond：房子整体条件
+
+
+## 观察变量关系
+
+写出函数来观察因子型变量和数值型变量的分布图。
+```{r}
+# 加载库
+library(ggplot2)
+library(Rmisc)
+# 将对于因子变量画图
+plot2_factor <- function(var_name){
+    plots <- list()
+    plots[[1]] <- ggplot(train, aes_string(x = var_name, fill = var_name) ) + 
+        geom_bar() +
+        guides(fill = FALSE) +
+            ggtitle(paste("count of ", var_name)) +
+            theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    plots[[2]] <- ggplot(train, aes_string(x = var_name, y = "SalePrice", fill = var_name) ) +
+        geom_boxplot() +
+        guides(fill = FALSE) +
+        ggtitle(paste( var_name, " vs SalePrice")) +
+        theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    multiplot(plotlist = plots, cols = 2)   
+}
+
+# 对于连续数字变量画图
+plot2_number <- function(var_name){
+    plots <- list()
+    plots[[1]] <- ggplot(train, aes_string(x = var_name) ) + 
+        geom_histogram() +
+        ggtitle(paste("count of ", var_name))
+
+    plots[[2]] <- ggplot(train, aes_string(x = var_name, y = "SalePrice") ) +
+        geom_point() +
+        ggtitle(paste( var_name, " vs SalePrice"))
+
+    multiplot(plotlist = plots, cols = 2)   
+}
+
+```
+
+首先观察街区和房间的关系图。
+```{r}
+plot2_factor("Neighborhood")
+```
+
+通过上图可以看出不同的社区，房价差异很大，因此这个变量应该是影响比较大的。
+
+
+```{r}
+plot2_number("YearBuilt")
+```
+
+通过对建筑年限这一数值型变量进行绘图研究看出，售价和建筑年限也有强烈的线性关系，说明该变量是有意义的。
+
+```{r}
+plot2_number("OverallQual")
+```
+
+从上图看出装修越好的房子价格越高。
+
+
+## 各个变量之间的相关性
+
+```{r}
+library(corrgram)
+sel <- c("LotArea","Neighborhood","BldgType","HouseStyle","YearBuilt","YearRemodAdd","OverallQual","OverallCond","MSZoning")
+
+corrgram(train[,sel], order=TRUE, lower.panel=panel.shade, upper.panel=panel.pie, text.panel=panel.txt)
+```
+
+
+## 训练线性模型
+
+```{r}
+
+tezheng <- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual + OverallCond
+
+# 训练模型
+lm1 <- lm(tezheng, train)
+
+# 查看模型概要
+summary(lm1)
+```
+模型中部分特征没有显著，但是模型整体的F检验通过，说明该模型还是可以的。模型调整后的$R^2=0.7605$效果还不错。
+
+
+## 变量选择
+
+首先进行人工变量选择，去除不显著的变量。去掉OverallCond，重新进行拟合
+
+```{r}
+# 初步决定的 lm.base 模型的变量
+fm.base <- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual
+
+# 训练模型
+lm.base <- lm(fm.base, train)
+summary(lm.base)
+```
+
+发现模型的效果没有显著提升。
+
+
+## 变量选择方法
+
+传统的变量选择方法有很多，例如`LASSO`，`Ridge`等方法，这里我们使用`Lasso`,随机森林和梯度下降法来进行变量选择，提升模型性能。
+
+```{r}
+# 安装
+library(glmnet)
+
+# 准备数据
+formula <- as.formula( log(SalePrice)~ .-Id )
+
+# model.matrix 会自动将分类变量变成哑变量
+x <- model.matrix(formula, train)
+y <- log(train$SalePrice)
+
+#执行 lasso 
+set.seed(999)
+lm.lasso <- cv.glmnet(x, y, alpha=1)
+
+# 画图
+plot(lm.lasso)
+
+# 得到各变量的系数
+coef(lm.lasso, s = "lambda.min")
+
+#由于 SalePrice 为 NA 无法数组化
+test$SalePrice <- 1
+test_x <- model.matrix(formula, test)
+
+# 预测、输出结果
+lm.pred <- predict(lm.lasso, newx = test_x, s = "lambda.min")
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_lasso.csv", row.names = FALSE)
+```
+
+
+使用随机森林方法进行回归建模.
+
+```{r,cache=TRUE,eval=FALSE}
+
+library(randomForest)
+library(caret)
+
+#设定种子
+set.seed(223)
+
+# 设定控制参数
+# method = "cv" -- k 折交叉验证 
+# number -- K 折交叉验证中的 K， number=10 则是 10 折交叉验证
+# repeats -- 交叉验证的次数
+# verboseIter -- 打印训练日志
+ctrl <- trainControl(method = "cv", number = 10, repeats = 20, verboseIter = TRUE)
+
+# 训练模型
+lm.rf <- train(log(SalePrice)~ .-Id, data = train,  method = "rf",  trControl = ctrl,  tuneLength = 3)
+
+# 输出结果 
+#write_res(lm.rf, test, 'rf')
+
+# 输出结果
+lm.pred <- predict(lm.rf, test)
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_rf.csv", row.names = FALSE)
+```
+
+使用梯度下降法进行模型建立。
+
+
+```{r,cache=TRUE,eval=FALSE}
+lm.gbm <- train(log(SalePrice)~ .-Id, data = train,  method = "gbm",  trControl = ctrl)
+
+# 输出结果 
+lm.pred <- predict(lm.gbm, test)
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_gbm.csv", row.names = FALSE)
+```
+
+
+
+
+最终我们得到了各个方法进行预测的残差，并且进行计算得到了各个方法的RES值，通过对比可以得出相对最好的方法，想要进一步提升模型的性能，可以使用bagging,stacking等模型融合的方法来进行改进。
