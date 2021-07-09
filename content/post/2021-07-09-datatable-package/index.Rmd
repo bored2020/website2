@@ -1,0 +1,134 @@
+---
+title: datatable package
+author: Yu-qi Feng
+date: '2021-07-09'
+slug: datatable-package
+categories:
+  - R
+tags:
+  - r
+output: html_document
+---
+
+# data.table包使用手册
+
+对数据分析来说使用data.table目前对`R`语言处理大数据是最优解，因此熟悉掌握使用`data.table`包是有必要，之前只是零散的使用，没有成体系的学习总结这一工具，因此这次特意在博客上面总结归纳一下。
+
+# 简单的示例
+
+```{r}
+library(data.table)
+DT = data.table(
+  ID = c("b","b","b","a","a","c"),
+  a = 1:6,
+  b = 7:12,
+  c = 13:18
+)
+DT
+class(DT$ID)
+```
+
+
+data.table简单示例,在data.table包中更像是使用`sql`语法来进行数据处理。
+
+
+```{r,eval=FALSE}
+DT[i, j, by]
+
+##   R:                 i                 j        by
+## SQL:  where | order by   select | update  group by
+```
+
+
+**使用`data.table`的诀窍就是,子集排序是对i,计算是使用j,由by分组**
+
+
+```{r}
+# 数据准备工作，从nycflight13包中读取到flghts数据，使用data.table函数转化为data.table包
+library(nycflights13)
+data<-nycflights13::flights
+data<-as.data.frame(data)
+mydata <- data.table(data)
+
+```
+
+# 查询功能
+
+## 使用条件查询条件
+
+对始发地为JFK并且月份是6L的航班进行查询。
+
+
+```{r}
+ans<-mydata[origin == "JFK"&month == 6L]
+head(ans)
+```
+
+
+得到前两行
+
+```{r}
+(ans<-mydata[1:2])
+```
+
+## 对列表进行按某一列或者某几列进行排序
+
+
+首先对origin进行升序排序，然后对dest进行降序排序
+
+```{r}
+ans<-mydata[order(origin,-dest)]
+head(ans)
+```
+
+# 对列进行筛选
+
+提取出`arr_delay`列,返回的为向量,vector。
+
+```{r}
+ans<-mydata[,arr_delay]
+head(ans)
+```
+
+
+提取出`arr_delay`列，返回为`data.table`类型。
+```{r}
+ans<-mydata[,list(arr_delay)]
+head(ans)
+```
+
+
+同时筛选出`arr_delay`和`dep_delay`列
+```{r}
+ans<-mydata[,.(arr_delay,dep_delay)]
+head(ans)
+```
+
+使用`.()`的效果和`list()`效果相同。
+
+
+
+
+# 对j使用计算
+
+## 计算出有多少航班的延误时间为0
+
+
+```{r}
+ans <- mydata[, sum( (arr_delay + dep_delay) < 0 )]
+ans
+```
+
+
+
+
+##  提取出子集i并且在j进行计算
+
+```{r}
+ans <- mydata[origin == "JFK"&month == 6L,
+              .(m_arr = mean(arr_delay),m_dep = mean(dep_delay))]
+ans
+```
+
+
+这里不知道为什么返回了NA值，之后再试试。

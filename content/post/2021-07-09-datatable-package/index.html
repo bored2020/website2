@@ -1,0 +1,164 @@
+---
+title: datatable package
+author: Yu-qi Feng
+date: '2021-07-09'
+slug: datatable-package
+categories:
+  - R
+tags:
+  - r
+output: html_document
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="data.table包使用手册" class="section level1">
+<h1>data.table包使用手册</h1>
+<p>对数据分析来说使用data.table目前对<code>R</code>语言处理大数据是最优解，因此熟悉掌握使用<code>data.table</code>包是有必要，之前只是零散的使用，没有成体系的学习总结这一工具，因此这次特意在博客上面总结归纳一下。</p>
+</div>
+<div id="简单的示例" class="section level1">
+<h1>简单的示例</h1>
+<pre class="r"><code>library(data.table)
+DT = data.table(
+  ID = c(&quot;b&quot;,&quot;b&quot;,&quot;b&quot;,&quot;a&quot;,&quot;a&quot;,&quot;c&quot;),
+  a = 1:6,
+  b = 7:12,
+  c = 13:18
+)
+DT</code></pre>
+<pre><code>##    ID a  b  c
+## 1:  b 1  7 13
+## 2:  b 2  8 14
+## 3:  b 3  9 15
+## 4:  a 4 10 16
+## 5:  a 5 11 17
+## 6:  c 6 12 18</code></pre>
+<pre class="r"><code>class(DT$ID)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>data.table简单示例,在data.table包中更像是使用<code>sql</code>语法来进行数据处理。</p>
+<pre class="r"><code>DT[i, j, by]
+
+##   R:                 i                 j        by
+## SQL:  where | order by   select | update  group by</code></pre>
+<p><strong>使用<code>data.table</code>的诀窍就是,子集排序是对i,计算是使用j,由by分组</strong></p>
+<pre class="r"><code># 数据准备工作，从nycflight13包中读取到flghts数据，使用data.table函数转化为data.table包
+library(nycflights13)
+data&lt;-nycflights13::flights
+data&lt;-as.data.frame(data)
+mydata &lt;- data.table(data)</code></pre>
+</div>
+<div id="查询功能" class="section level1">
+<h1>查询功能</h1>
+<div id="使用条件查询条件" class="section level2">
+<h2>使用条件查询条件</h2>
+<p>对始发地为JFK并且月份是6L的航班进行查询。</p>
+<pre class="r"><code>ans&lt;-mydata[origin == &quot;JFK&quot;&amp;month == 6L]
+head(ans)</code></pre>
+<pre><code>##    year month day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+## 1: 2013     6   1        2           2359         3      341            350
+## 2: 2013     6   1      538            545        -7      925            922
+## 3: 2013     6   1      539            540        -1      832            840
+## 4: 2013     6   1      553            600        -7      700            711
+## 5: 2013     6   1      554            600        -6      851            908
+## 6: 2013     6   1      557            600        -3      934            942
+##    arr_delay carrier flight tailnum origin dest air_time distance hour minute
+## 1:        -9      B6    739  N618JB    JFK  PSE      200     1617   23     59
+## 2:         3      B6    725  N806JB    JFK  BQN      203     1576    5     45
+## 3:        -8      AA    701  N5EAAA    JFK  MIA      140     1089    5     40
+## 4:       -11      EV   5716  N835AS    JFK  IAD       42      228    6      0
+## 5:       -17      UA   1159  N33132    JFK  LAX      330     2475    6      0
+## 6:        -8      B6    715  N766JB    JFK  SJU      198     1598    6      0
+##              time_hour
+## 1: 2013-06-01 23:00:00
+## 2: 2013-06-01 05:00:00
+## 3: 2013-06-01 05:00:00
+## 4: 2013-06-01 06:00:00
+## 5: 2013-06-01 06:00:00
+## 6: 2013-06-01 06:00:00</code></pre>
+<p>得到前两行</p>
+<pre class="r"><code>(ans&lt;-mydata[1:2])</code></pre>
+<pre><code>##    year month day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+## 1: 2013     1   1      517            515         2      830            819
+## 2: 2013     1   1      533            529         4      850            830
+##    arr_delay carrier flight tailnum origin dest air_time distance hour minute
+## 1:        11      UA   1545  N14228    EWR  IAH      227     1400    5     15
+## 2:        20      UA   1714  N24211    LGA  IAH      227     1416    5     29
+##              time_hour
+## 1: 2013-01-01 05:00:00
+## 2: 2013-01-01 05:00:00</code></pre>
+</div>
+<div id="对列表进行按某一列或者某几列进行排序" class="section level2">
+<h2>对列表进行按某一列或者某几列进行排序</h2>
+<p>首先对origin进行升序排序，然后对dest进行降序排序</p>
+<pre class="r"><code>ans&lt;-mydata[order(origin,-dest)]
+head(ans)</code></pre>
+<pre><code>##    year month day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+## 1: 2013     1   2      905            822        43     1313           1045
+## 2: 2013     1   3      848            850        -2     1149           1113
+## 3: 2013     1   4      901            850        11     1120           1113
+## 4: 2013     1   6      843            848        -5     1053           1111
+## 5: 2013     1   7      858            850         8     1105           1113
+## 6: 2013     1   8      847            850        -3     1116           1113
+##    arr_delay carrier flight tailnum origin dest air_time distance hour minute
+## 1:        NA      EV   4140  N15912    EWR  XNA       NA     1131    8     22
+## 2:        36      EV   4125  N21129    EWR  XNA      196     1131    8     50
+## 3:         7      EV   4125  N16178    EWR  XNA      168     1131    8     50
+## 4:       -18      EV   4625  N12172    EWR  XNA      174     1131    8     48
+## 5:        -8      EV   4125  N13118    EWR  XNA      163     1131    8     50
+## 6:         3      EV   4125  N14180    EWR  XNA      177     1131    8     50
+##              time_hour
+## 1: 2013-01-02 08:00:00
+## 2: 2013-01-03 08:00:00
+## 3: 2013-01-04 08:00:00
+## 4: 2013-01-06 08:00:00
+## 5: 2013-01-07 08:00:00
+## 6: 2013-01-08 08:00:00</code></pre>
+</div>
+</div>
+<div id="对列进行筛选" class="section level1">
+<h1>对列进行筛选</h1>
+<p>提取出<code>arr_delay</code>列,返回的为向量,vector。</p>
+<pre class="r"><code>ans&lt;-mydata[,arr_delay]
+head(ans)</code></pre>
+<pre><code>## [1]  11  20  33 -18 -25  12</code></pre>
+<p>提取出<code>arr_delay</code>列，返回为<code>data.table</code>类型。</p>
+<pre class="r"><code>ans&lt;-mydata[,list(arr_delay)]
+head(ans)</code></pre>
+<pre><code>##    arr_delay
+## 1:        11
+## 2:        20
+## 3:        33
+## 4:       -18
+## 5:       -25
+## 6:        12</code></pre>
+<p>同时筛选出<code>arr_delay</code>和<code>dep_delay</code>列</p>
+<pre class="r"><code>ans&lt;-mydata[,.(arr_delay,dep_delay)]
+head(ans)</code></pre>
+<pre><code>##    arr_delay dep_delay
+## 1:        11         2
+## 2:        20         4
+## 3:        33         2
+## 4:       -18        -1
+## 5:       -25        -6
+## 6:        12        -4</code></pre>
+<p>使用<code>.()</code>的效果和<code>list()</code>效果相同。</p>
+</div>
+<div id="对j使用计算" class="section level1">
+<h1>对j使用计算</h1>
+<div id="计算出有多少航班的延误时间为0" class="section level2">
+<h2>计算出有多少航班的延误时间为0</h2>
+<pre class="r"><code>ans &lt;- mydata[, sum( (arr_delay + dep_delay) &lt; 0 )]
+ans</code></pre>
+<pre><code>## [1] NA</code></pre>
+</div>
+<div id="提取出子集i并且在j进行计算" class="section level2">
+<h2>提取出子集i并且在j进行计算</h2>
+<pre class="r"><code>ans &lt;- mydata[origin == &quot;JFK&quot;&amp;month == 6L,
+              .(m_arr = mean(arr_delay),m_dep = mean(dep_delay))]
+ans</code></pre>
+<pre><code>##    m_arr m_dep
+## 1:    NA    NA</code></pre>
+<p>这里不知道为什么返回了NA值，之后再试试。</p>
+</div>
+</div>
