@@ -1,0 +1,7 @@
+﻿method,MSE
+BASE,0.17168
+stepwise,0.13197
+LASSO,0.13173
+random forest,0.14189
+gbdt,0.13137
+BeSS,0.009951527

@@ -1,0 +1,9 @@
+base
+knitr
+ggplot2
+lattice
+plyr
+Rmisc
+corrgram
+Matrix
+glmnet

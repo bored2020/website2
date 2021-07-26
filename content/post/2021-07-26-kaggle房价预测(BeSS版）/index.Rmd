@@ -1,0 +1,405 @@
+---
+title: kaggle房价预测(BeSS版)
+author: Yu-qi Feng
+date: '2021-07-26'
+slug: kaggle-housingprice
+categories:
+  - R
+  - kaggle
+  - bess
+tags:
+  - r
+output: html_document
+---
+
+
+# 探索性分析
+
+首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+```{r include=FALSE}
+train <- read.csv("train.csv",stringsAsFactors = TRUE)
+test <- read.csv("test.csv",stringsAsFactors = TRUE)
+test$SalePrice <- NA
+data <- rbind(train, test)
+library(knitr)
+```
+
+```{r}
+str(data)
+```
+
+从上面可以观察到，变量主要分为数值型变量和因子型变量。
+```{r}
+bianliang <- sapply(data,class)
+table(bianliang)
+#对每列就是变量使用class函数然后使用table函数输出类型
+```
+
+数据中有43个因子型变量和38个整数型变量。
+
+
+
+# 变量处理
+
+通过对数据观察发现，存在许多缺失值，首先处理数据的缺失值。
+```{r}
+queshizhi<-sapply(data,function(x) sum(is.na(x)))
+#使用r语言中的function函数计算为na的个数
+# 按照缺失的大小进行排名
+queshi <-sort(queshizhi,decreasing = T)
+queshi[queshi>0]
+```
+
+我们进一步看这些缺失的变量的情况。
+```{r}
+summary(data[,names(queshi)[queshi>0]])
+```
+
+对于缺失数据很多的PoolQC、MiscFeature、Alley、Fence、FireplaceQu这些变量，无法进行插值补充，我们直接去除这些变量。
+```{r}
+# 去除如下变量
+quchu <- names(data) %in% c("PoolQC","MiscFeature","Alley","Fence","FireplaceQu")
+data <- data[!quchu]
+#使用逻辑运算符提取出变量然后去除相对应的列
+```
+
+
+去除了NA值较多的变量之后，对Garage系列的变量和Bsmt系列的变量通过网上搜索发现这是车库和地下室的相关数据，对这些NA值我们使用NONE来替代缺失值。
+
+```{r echo=FALSE, warning=FALSE}
+Garage <- c("GarageType","GarageQual","GarageCond","GarageFinish")
+Bsmt <- c("BsmtExposure","BsmtFinType2","BsmtQual","BsmtCond","BsmtFinType1")
+for (x in c(Garage, Bsmt) )
+{
+data[[x]] <- factor( data[[x]], levels= c(levels(data[[x]]),c('None')))
+data[[x]][is.na(data[[x]])] <- "None"
+}
+#使用for 循环来对相关变量进行赋值，将这些变量中的NA赋予None
+```
+
+通过查询描述文件得知，GarrageYrBLt为车库建造年份，使用房子的建造年份代替。
+```{r}
+data$GarageYrBlt[is.na(data$GarageYrBlt)] <- data$YearBuilt[is.na(data$GarageYrBlt)]
+```
+
+
+## 补全缺失值
+
+对LotFrontage是房屋到街道的距离，用中位数来填充缺失。
+```{r}
+data$LotFrontage[is.na(data$LotFrontage)] <- median(data$LotFrontage, na.rm = T)
+#使用中位数补全
+```
+
+MasVnrType是外墙的装饰材料，对售价的影响不大。用NONE补充
+```{r}
+data[["MasVnrType"]][is.na(data[["MasVnrType"]])] = "None"
+```
+
+
+MasVnrArea是外墙装饰材料的面积，用数值0来填充。
+```{r}
+data[["MasVnrArea"]][is.na(data[["MasVnrArea"]])] <- 0
+```
+
+ Utilities 没有分析的意义，直接去除
+```{r}
+data$Utilities <- NULL
+```
+
+
+变量 BsmtFullBath BsmtHalfBath BsmtFinSF1 BsmtFinSF2 BsmtUnfSF TotalBsmtSF GarageCars GarageArea 是和车库和地下室相关的变量，是数值型变量，补充为0就可以。
+
+```{r}
+drop <- c("BsmtFullBath","BsmtHalfBath","BsmtFinSF1","BsmtFinSF2","BsmtUnfSF","TotalBsmtSF","GarageCars","GarageArea")
+for (x in drop )    data[[x]][is.na(data[[x]])] <- 0
+#使用简单的循环进行数据清洗
+```
+
+
+MSZoning,Functional,Exterior1st,Exterior2nd,KitchenQual,Electrical,SaleType,这些是因子型变量，并且缺失值很少，用最高频率的因子来替代即可。
+```{r}
+tidai <- c("MSZoning","Functional","Exterior1st","Exterior2nd","KitchenQual","Electrical","SaleType")
+for (x in tidai )    data[[x]][is.na(data[[x]])] <- levels(data[[x]])[which.max(table(data[[x]]))]
+```
+
+```{r}
+# 通过SalePrice是否为空来区分训练集和测试集
+train <- data[!is.na(data$SalePrice), ]
+test <- data[is.na(data$SalePrice), ]
+```
+
+
+
+# 建立模型
+
+数据中自变量很多，根据常识我们要从自变量中选出对房价影响最大的因素。我们可以首先人工筛选出一些对房价影响大的因素，然后再添加新的变量来看是否对模型会有改善。
+在国内的话，房价的主要影响因素有房子面积、房子所在的区域、小区等，房龄、房型（小高层、多层、别墅等）、特殊场景（地铁房、学区房等）、装修等也会影响价格。对美国房价来说其实也差不多。因此我们选择如下的变量作为观测。
+
+- LotArea 房子的面积
+- Neighborhood 城市街区 用来初步代替 区域、小区
+- Condition1 Condition2 附近的交通情况
+- BldgType 房屋类型 独栋别墅、联排别墅
+- HouseStyle 房子的层数
+- YearBuilt 房子建造的年份
+- YearRemodAdd： 房子的改造年份
+- OverallQual： 房子整体质量，考量材料和完成度
+- OverallCond：房子整体条件
+
+
+## 观察变量关系
+
+写出函数来观察因子型变量和数值型变量的分布图。
+```{r}
+# 加载库
+library(ggplot2)
+library(Rmisc)
+# 将对于因子变量画图
+plot2_factor <- function(var_name){
+    plots <- list()
+    plots[[1]] <- ggplot(train, aes_string(x = var_name, fill = var_name) ) + 
+        geom_bar() +
+        guides(fill = FALSE) +
+            ggtitle(paste("count of ", var_name)) +
+            theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    plots[[2]] <- ggplot(train, aes_string(x = var_name, y = "SalePrice", fill = var_name) ) +
+        geom_boxplot() +
+        guides(fill = FALSE) +
+        ggtitle(paste( var_name, " vs SalePrice")) +
+        theme(axis.text.x = element_text(angle = 90, hjust =1))
+
+    multiplot(plotlist = plots, cols = 2)   
+}
+
+# 对于连续数字变量画图
+plot2_number <- function(var_name){
+    plots <- list()
+    plots[[1]] <- ggplot(train, aes_string(x = var_name) ) + 
+        geom_histogram() +
+        ggtitle(paste("count of ", var_name))
+
+    plots[[2]] <- ggplot(train, aes_string(x = var_name, y = "SalePrice") ) +
+        geom_point() +
+        ggtitle(paste( var_name, " vs SalePrice"))
+
+    multiplot(plotlist = plots, cols = 2)   
+}
+#构建两个绘图函数，分别可以直接输出变量名画出相对应的图像，分别是因子型变量和数值型变量。
+
+```
+
+首先观察街区和房间的关系图。
+```{r}
+plot2_factor("Neighborhood")
+```
+
+通过上图可以看出不同的社区，房价差异很大，因此这个变量应该是影响比较大的。
+
+
+```{r}
+plot2_number("YearBuilt")
+```
+
+通过对建筑年限这一数值型变量进行绘图研究看出，售价和建筑年限也有强烈的线性关系，说明该变量是有意义的。
+
+```{r}
+plot2_number("OverallQual")
+```
+
+从上图看出装修越好的房子价格越高。
+
+
+## 各个变量之间的相关性
+
+```{r}
+library(corrgram)
+sel <- c("LotArea","Neighborhood","BldgType","HouseStyle","YearBuilt","YearRemodAdd","OverallQual","OverallCond","MSZoning")
+
+corrgram(train[,sel], order=TRUE, lower.panel=panel.shade, upper.panel=panel.pie, text.panel=panel.txt)
+
+```
+
+
+## 训练线性模型
+
+```{r}
+
+tezheng <- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual + OverallCond
+
+# 训练模型
+lm1 <- lm(tezheng, train)
+
+# 查看模型概要
+summary(lm1)
+```
+模型中部分特征没有显著，但是模型整体的F检验通过，说明该模型还是可以的。模型调整后的$R^2=0.7605$效果还不错。
+
+
+## 变量选择
+
+首先进行人工变量选择，去除不显著的变量。去掉OverallCond，重新进行拟合
+
+```{r}
+# 初步决定的 lm.base 模型的变量
+fm.base <- SalePrice ~ LotArea + Neighborhood + BldgType + HouseStyle + YearBuilt + YearRemodAdd + OverallQual
+
+# 训练模型
+lm.base <- lm(fm.base, train)
+summary(lm.base)
+```
+
+发现模型的效果没有显著提升。
+
+
+## 变量选择方法
+
+传统的变量选择方法有很多，例如`LASSO`，`Ridge`等方法，这里我们使用`Lasso`,随机森林和梯度下降法来进行变量选择，提升模型性能。
+
+```{r}
+# 安装
+library(glmnet)
+
+# 准备数据
+formula <- as.formula( log(SalePrice)~ .-Id )
+
+# model.matrix 会自动将分类变量变成哑变量
+x <- model.matrix(formula, train)
+y <- log(train$SalePrice)
+
+#执行 lasso 
+set.seed(999)
+lm.lasso <- cv.glmnet(x, y, alpha=1)
+
+# 画图
+plot(lm.lasso)
+
+# 得到各变量的系数
+coef(lm.lasso, s = "lambda.min")
+
+#由于 SalePrice 为 NA 无法数组化
+test$SalePrice <- 1
+test_x <- model.matrix(formula, test)
+
+# 预测、输出结果
+lm.pred <- predict(lm.lasso, newx = test_x, s = "lambda.min")
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_lasso.csv", row.names = FALSE)
+```
+
+
+使用随机森林方法进行回归建模.
+
+```{r,cache=TRUE,eval=FALSE}
+
+library(randomForest)
+library(caret)
+
+#设定种子
+set.seed(223)
+
+# 设定控制参数
+# method = "cv" -- k 折交叉验证 
+# number -- K 折交叉验证中的 K， number=10 则是 10 折交叉验证
+# repeats -- 交叉验证的次数
+# verboseIter -- 打印训练日志
+ctrl <- trainControl(method = "cv", number = 10, repeats = 20, verboseIter = TRUE)
+
+# 训练模型
+lm.rf <- train(log(SalePrice)~ .-Id, data = train,  method = "rf",  trControl = ctrl,  tuneLength = 3)
+
+# 输出结果 
+#write_res(lm.rf, test, 'rf')
+
+# 输出结果
+lm.pred <- predict(lm.rf, test)
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_rf.csv", row.names = FALSE)
+```
+
+使用梯度下降法进行模型建立。
+
+
+```{r,cache=TRUE,eval=FALSE}
+lm.gbm <- train(log(SalePrice)~ .-Id, data = train,  method = "gbm",  trControl = ctrl)
+
+# 输出结果 
+lm.pred <- predict(lm.gbm, test)
+res <- data.frame(Id = test$Id, SalePrice = exp(lm.pred))
+write.csv(res, file = "res_gbm.csv", row.names = FALSE)
+```
+
+
+
+
+最终我们得到了各个方法进行预测的残差，并且进行计算得到了各个方法的RES值，通过对比可以得出相对最好的方法，想要进一步提升模型的性能，可以使用bagging,stacking等模型融合的方法来进行改进。
+
+
+# 使用BeSS方法进行变量选择回归。
+
+之前使用的是比较传统的方法，这里本文使用最优子集法，使用`BeSS`包对该问题进行分析建模。
+
+最优子集法即`best subset selection`,最早可见Hocking[@hocking1967selection]等人1967年的文章，其思想十分简单。从零号模型（null model）$M_0$开始，这个模型只有截距项而没有任何自变量。然后用不同的特征组合进行拟合，从特征中分别挑选出一个最好的模型（RSS最小或$R^2$最大），也就是包含1个特征的模型$M_1$，包含2个特征的模型$M_2$，直至包含p个特征的模型$M_p$。然后从这总共p+1个模型中选出其中最好的模型（根据交叉验证误差，$C_p$，BIC或adjusted $R^2$)（注：为什么不能用RSS或$R^2$来衡量？因为增加任何特征，模型的训练RSS只会变小，$R^2$只会增大）。这个最好模型所配置的特征就是筛选出的特征。最优子集法在理想的条件下可以筛选出最好的特征集合出来，但是其高昂的计算成本是阻碍其应用的主要问题。Zhu[@Zhu2021]等人在2021年提出了一种最优子集法的多项式算法，证明了在一定条件下，该算法具有以下三个优良性质:
+
+-   计算复杂度是多项式的
+-   选择出来的子集能够覆盖真实的集合
+-   该算法的解是全局最优的
+
+作者将该方法称为`Adaptive Best-Subset Selection`以下简称`BeSS`,在作者提出的SIC(special information criterion)准则下，该方法的模型选择连续性得到了证明。SIC准则如下: $$\operatorname{SIC}(\mathcal{A})=n \log \mathcal{L}_{\mathcal{A}}+|\mathcal{A}| \log (p) \log \log n$$ 其中$\mathcal{A}$为筛选出来的特征的集合。
+
+## 剪接方法简介
+
+首先定义一些变量名称，$\boldsymbol{\beta}=\left(\beta_{1}, \ldots, \beta_{p}\right)^{\top} \in \mathbb{R}^{p}$，将$\ell_{q}$定义为：$\|\boldsymbol{\beta}\|_{q}=\left(\sum_{j=1}^{p}\left|\beta_{j}\right|^{q}\right)^{1 / q}，q \in[1, \infty)$。$\mathcal{S}=\{1, \ldots, p\}$，对任何$\mathcal{A} \subseteq \mathcal{S}$,记$\mathcal{A}^{c}=\mathcal{S} \backslash \mathcal{A}$作为$\mathcal{A}$的补集，$|\mathcal{A}|$作为他的基。将$\beta$的子集定义为$\operatorname{supp}(\boldsymbol{\beta})=\left\{j: \beta_{j} \neq 0\right\}$。对一个指标集$\mathcal{A} \subseteq\{1, \ldots, p\}$，$\boldsymbol{\beta}_{\mathcal{A}}=\left(\beta_{j}, j \in \mathcal{A}\right) \in \mathbb{R}^{|\mathcal{A}|}$。对一个矩阵$\boldsymbol{X} \in \mathbb{R}^{n \times p}$定义$\boldsymbol{X}_{\mathcal{A}} =(X_{j},j \in \mathcal{A}) \in \mathbb{R}^{n \times|\mathcal{A}|}$。对任何一个向量$t$和任何一个集合$\mathcal{A}$,$t^{\mathcal{A}}$是一个第$j$个元素$\left(\boldsymbol{t}^{\mathcal{A}}\right)_{j}$如果$j \in \mathcal{A}$就等于$t_{j}$，否则为0。
+
+在文章中，作者最重要的贡献是提出了剪接方法，即`splicing method`，通过使用该种方法，显著的提升了最优子集算法的性能，使其在当前的环境下变的可行。 考虑$\ell_{0}$限制最小化问题：$$
+\min _{\boldsymbol{\beta}} \mathcal{L}_{n}(\boldsymbol{\beta}), \quad \text { s. } t\|\boldsymbol{\beta}\|_{0} \leq \boldsymbol{s}
+$$ 其中：$\mathcal{L}_{n}(\boldsymbol{\beta})=\frac{1}{2 n}\|\boldsymbol{y}-\boldsymbol{X} \boldsymbol{\beta}\|_{2}^{2}$。在不考虑全局损失的情况下，我们考虑$\|\boldsymbol{\beta}\|_{0}=\boldsymbol{s}$。给定一个初始集合$\mathcal{A} \subset \mathcal{S}=\{1,2, \ldots, p\}$，且$|\mathcal{A}|=s$，记$\mathcal{I}=\mathcal{A}^{c}$并且计算$$
+\hat{\boldsymbol{\beta}}=\arg \min _{\boldsymbol{\beta}_{\mathcal{I}}=0} \mathcal{L}_{n}(\boldsymbol{\beta})
+$$ 将$\mathcal{A}$和$\mathcal{I}$定义为激活集合和非激活集合，这里的激活就是在真实集合中的意思。在给定了$\mathcal{A}$和$\hat{\beta}$之后，可以定义两种损失如下：
+
+-   后退损失$$
+    \xi_{j}=\mathcal{L}_{n}\left(\hat{\boldsymbol{\beta}}^{\mathcal{A} \backslash\{j\}}\right)-\mathcal{L}_{n}\left(\hat{\boldsymbol{\beta}}^{\mathcal{A}}\right)=\frac{\boldsymbol{X}_{j}^{\top} \boldsymbol{X}_{j}}{2 n}\left(\hat{\beta}_{j}\right)^{2}
+    $$
+
+-   前进损失：$$
+    \zeta_{j}=\mathcal{L}_{n}\left(\hat{\boldsymbol{\beta}}^{\mathcal{A}}\right)-\mathcal{L}_{n}\left(\hat{\boldsymbol{\beta}}^{\mathcal{A}}+\hat{\boldsymbol{t}}^{\{j\}}\right)=\frac{\boldsymbol{X}_{j}^{\top} \boldsymbol{X}_{j}}{2 n}\left(\frac{\hat{d}_{j}}{\boldsymbol{X}_{j}^{\top} \boldsymbol{X}_{j} / n}\right)^{2}
+    $$ 其中：$\hat{t}=\arg \min _{t} \mathcal{L}_{n}\left(\hat{\boldsymbol{\beta}}^{\mathcal{A}}+\boldsymbol{t}^{\{j\}}\right), \hat{d}_{j}=\boldsymbol{X}_{j}^{\top}(\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}}) / n$
+
+直观的而言，对$j \in \mathcal{A}$一个大的$\xi_{j}$说明这个变量是潜在重要的。但是由于子集大小不同，这两个损失是无法比较的。然而如果将$\mathcal{A}$中的一些不是那么相关的变量和$\mathcal{I}$中一些重要的变量交换，这也许能够获得比较好的结果，这就是剪接法的思想所在。 特别的，对任何给定的$k <= s$定义如下： $$
+\mathcal{A}_{k}=\left\{j \in \mathcal{A}: \sum_{i \in \mathcal{A}} \mathrm{I}\left(\xi_{j} \geq \xi_{i}\right) \leq k\right\}
+$$ $$
+\mathcal{I}_{k}=\left\{j \in \mathcal{I}: \sum_{i \in \mathcal{I}} \mathrm{I}\left(\zeta_{j} \leq \zeta_{i}\right) \leq k\right\}
+$$ 通过交换$\mathcal{A}_{k}$和$\mathcal{I}_{k}$,从而实现对$\mathcal{A}$和$\mathcal{I}$的切片，得到了新的集合： $$
+\tilde{\mathcal{A}}=\left(\mathcal{A} \backslash \mathcal{A}_{k}\right) \cup \mathcal{I}_{k}
+$$ 记$\tilde{\mathcal{I}}=\tilde{\mathcal{A}}^{c}, \tilde{\boldsymbol{\beta}}=\arg \min _{\boldsymbol{\beta}_{\tilde{\mathcal{I}}}=0} \mathcal{L}_{n}(\boldsymbol{\beta})$，并且$\tau_{s}>0$为阈值。如果$\tau_{s} < \mathcal{L}_{n}(\hat{\boldsymbol{\beta}})-\mathcal{L}_{n}(\tilde{\boldsymbol{\beta}})$ 则说明$\tilde{\mathcal{A}}$是优于$\mathcal{A}$。通过这样的方法则可以更新集合$\mathcal{A}$指导损失函数不能够通过剪接方法来进行提升。还有的问题就是设定初始集。通常来说我们选定第一批$s$个特征，这些特征是与$y$关联程度最大的特征。设$k_{max}$为剪接最大尺寸，$k_{max}<s$,接下来的算法演示了如何计算具体的方法。
+
+
+
+```{r}
+# 这里使用之前构造好的x矩阵，将分类因子型变量转化为哑变量
+library(BeSS)
+bessmodel<-bess(x,log(train$SalePrice),family = "gaussian",K.max = 40,max.steps = 30,method = "gsection")
+plot(bessmodel,type = "both",breaks = TRUE,K=10)
+bessmodel
+```
+
+输出使用bess方法建立的最优模型
+```{r}
+bestmodel<-bessmodel$bestmodel
+summary(bestmodel)
+```
+```{r}
+mse<-(sum((bestmodel$residuals)^2))/1460
+mse
+```
+
+
+各种方法对比
+```{r paged.print=TRUE}
+jieguo<-read.csv("jieguo.csv",header = T)
+library(knitr)
+knitr::kable(jieguo)
+```
+
+
+使用bess方法建立的模型最终的均方误差只有$0.009951527$，效果很好，但是也许建模过程中对因子化处理有些问题。通过对比得出相对而言`bess`方法是最优的。
