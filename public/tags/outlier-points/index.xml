@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>outlier points on Feng&#39;s website</title>
+    <link>https://fyq2.netlify.app/tags/outlier-points/</link>
+    <description>Recent content in outlier points on Feng&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 08 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/tags/outlier-points/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据清洗</title>
+      <link>https://fyq2.netlify.app/2021/07/08/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/08/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/</guid>
+      <description>缺失值分析与处理library(VIM)## 载入需要的程辑包：colorspace## 载入需要的程辑包：grid## VIM is ready to use.## Suggestions and bug-reports can be submitted at: https://github.com/statistikat/VIM/issues## ## 载入程辑包：&amp;#39;VIM&amp;#39;## The following object is masked from &amp;#39;package:datasets&amp;#39;:## ## sleepdata(sleep,package = &amp;quot;VIM&amp;quot;)dim(sleep)#查看数据的维度## [1] 62 10complete.cases(sleep)## [1] FALSE TRUE FALSE FALSE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE## [13] FALSE FALSE TRUE TRUE TRUE TRUE FALSE FALSE FALSE TRUE TRUE FALSE## [25] TRUE FALSE TRUE TRUE TRUE FALSE FALSE TRUE TRUE TRUE FALSE FALSE## [37] TRUE TRUE TRUE TRUE FALSE TRUE TRUE TRUE TRUE TRUE FALSE TRUE## [49] TRUE TRUE TRUE TRUE FALSE TRUE FALSE FALSE TRUE TRUE TRUE TRUE## [61] TRUE FALSEsum(complete.</description>
+    </item>
+    
+  </channel>
+</rss>

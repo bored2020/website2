@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>machinelearning on Feng&#39;s website</title>
+    <link>https://fyq2.netlify.app/tags/machinelearning/</link>
+    <description>Recent content in machinelearning on Feng&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 05 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/tags/machinelearning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kaggle房价预测</title>
+      <link>https://fyq2.netlify.app/2021/07/05/kaggle-housing-price-predict/</link>
+      <pubDate>Mon, 05 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/05/kaggle-housing-price-predict/</guid>
+      <description>最近在网上尝试练习使用了kaggle中的高级房价预测，这个问题本质上回归问题，使用机器学习的方法和技巧可以较好的解决这一类问题，最终本文使用BeSS这一方法来处理该问题，\(MSE\)近乎为0，效果不错，故和大家分享。这偏文章的前面受到该博客的启发，特此感谢。
+探索性分析首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+str(data)## &amp;#39;data.frame&amp;#39;: 2919 obs. of 81 variables:## $ Id : int 1 2 3 4 5 6 7 8 9 10 ...## $ MSSubClass : int 60 20 60 70 60 50 20 60 50 190 ...## $ MSZoning : Factor w/ 5 levels &amp;quot;C (all)&amp;quot;,&amp;quot;FV&amp;quot;,..: 4 4 4 4 4 4 4 4 5 4 ...## $ LotFrontage : int 65 80 68 60 84 85 75 NA 51 50 .</description>
+    </item>
+    
+  </channel>
+</rss>
