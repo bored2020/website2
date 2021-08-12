@@ -1,0 +1,10 @@
+---
+title: paper
+author: YuqiFeng
+date: '2021-08-12'
+slug: paper
+categories: []
+tags: []
+---
+
+这是第一次尝试写数理类学术论文，发到网上是想让更多的人看到，贻笑大方，望各位支教。[论文连接](/2021/08/10/paper/test.pdf)
