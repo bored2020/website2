@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>bess on Feng&#39;s website</title>
+    <link>https://fyq2.netlify.app/categories/bess/</link>
+    <description>Recent content in bess on Feng&#39;s website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 26 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/categories/bess/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kaggle房价预测(BeSS版)</title>
+      <link>https://fyq2.netlify.app/2021/07/26/kaggle-housingprice/</link>
+      <pubDate>Mon, 26 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/26/kaggle-housingprice/</guid>
+      <description>探索性分析首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+str(data)## &amp;#39;data.frame&amp;#39;: 2919 obs. of 81 variables:## $ Id : int 1 2 3 4 5 6 7 8 9 10 ...## $ MSSubClass : int 60 20 60 70 60 50 20 60 50 190 ...## $ MSZoning : Factor w/ 5 levels &amp;quot;C (all)&amp;quot;,&amp;quot;FV&amp;quot;,..: 4 4 4 4 4 4 4 4 5 4 ...## $ LotFrontage : int 65 80 68 60 84 85 75 NA 51 50 .</description>
+    </item>
+    
+  </channel>
+</rss>

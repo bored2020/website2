@@ -6,7 +6,83 @@
     <description>Recent content on Feng&#39;s website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 31 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 26 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://fyq2.netlify.app/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kaggle房价预测(BeSS版)</title>
+      <link>https://fyq2.netlify.app/2021/07/26/kaggle-housingprice/</link>
+      <pubDate>Mon, 26 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/26/kaggle-housingprice/</guid>
+      <description>探索性分析首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+str(data)## &amp;#39;data.frame&amp;#39;: 2919 obs. of 81 variables:## $ Id : int 1 2 3 4 5 6 7 8 9 10 ...## $ MSSubClass : int 60 20 60 70 60 50 20 60 50 190 ...## $ MSZoning : Factor w/ 5 levels &amp;quot;C (all)&amp;quot;,&amp;quot;FV&amp;quot;,..: 4 4 4 4 4 4 4 4 5 4 ...## $ LotFrontage : int 65 80 68 60 84 85 75 NA 51 50 .</description>
+    </item>
+    
+    <item>
+      <title>datatable package</title>
+      <link>https://fyq2.netlify.app/2021/07/09/datatable-package/</link>
+      <pubDate>Fri, 09 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/09/datatable-package/</guid>
+      <description>data.table包使用手册对数据分析来说使用data.table目前对R语言处理大数据是最优解，因此熟悉掌握使用data.table包是有必要，之前只是零散的使用，没有成体系的学习总结这一工具，因此这次特意在博客上面总结归纳一下。
+简单的示例library(data.table)DT = data.table(ID = c(&amp;quot;b&amp;quot;,&amp;quot;b&amp;quot;,&amp;quot;b&amp;quot;,&amp;quot;a&amp;quot;,&amp;quot;a&amp;quot;,&amp;quot;c&amp;quot;),a = 1:6,b = 7:12,c = 13:18)DT## ID a b c## 1: b 1 7 13## 2: b 2 8 14## 3: b 3 9 15## 4: a 4 10 16## 5: a 5 11 17## 6: c 6 12 18class(DT$ID)## [1] &amp;quot;character&amp;quot;data.table简单示例,在data.table包中更像是使用sql语法来进行数据处理。</description>
+    </item>
+    
+    <item>
+      <title>数据清洗</title>
+      <link>https://fyq2.netlify.app/2021/07/08/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/</link>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/08/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/</guid>
+      <description>缺失值分析与处理library(VIM)## 载入需要的程辑包：colorspace## 载入需要的程辑包：grid## VIM is ready to use.## Suggestions and bug-reports can be submitted at: https://github.com/statistikat/VIM/issues## ## 载入程辑包：&amp;#39;VIM&amp;#39;## The following object is masked from &amp;#39;package:datasets&amp;#39;:## ## sleepdata(sleep,package = &amp;quot;VIM&amp;quot;)dim(sleep)#查看数据的维度## [1] 62 10complete.cases(sleep)## [1] FALSE TRUE FALSE FALSE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE## [13] FALSE FALSE TRUE TRUE TRUE TRUE FALSE FALSE FALSE TRUE TRUE FALSE## [25] TRUE FALSE TRUE TRUE TRUE FALSE FALSE TRUE TRUE TRUE FALSE FALSE## [37] TRUE TRUE TRUE TRUE FALSE TRUE TRUE TRUE TRUE TRUE FALSE TRUE## [49] TRUE TRUE TRUE TRUE FALSE TRUE FALSE FALSE TRUE TRUE TRUE TRUE## [61] TRUE FALSEsum(complete.</description>
+    </item>
+    
+    <item>
+      <title>kaggle房价预测</title>
+      <link>https://fyq2.netlify.app/2021/07/05/kaggle-housing-price-predict/</link>
+      <pubDate>Mon, 05 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/05/kaggle-housing-price-predict/</guid>
+      <description>最近在网上尝试练习使用了kaggle中的高级房价预测，这个问题本质上回归问题，使用机器学习的方法和技巧可以较好的解决这一类问题，最终本文使用BeSS这一方法来处理该问题，\(MSE\)近乎为0，效果不错，故和大家分享。这偏文章的前面受到该博客的启发，特此感谢。
+探索性分析首先读入数据housing。将数据导入到data变量中，观察data变量的结构。
+str(data)## &amp;#39;data.frame&amp;#39;: 2919 obs. of 81 variables:## $ Id : int 1 2 3 4 5 6 7 8 9 10 ...## $ MSSubClass : int 60 20 60 70 60 50 20 60 50 190 ...## $ MSZoning : Factor w/ 5 levels &amp;quot;C (all)&amp;quot;,&amp;quot;FV&amp;quot;,..: 4 4 4 4 4 4 4 4 5 4 ...## $ LotFrontage : int 65 80 68 60 84 85 75 NA 51 50 .</description>
+    </item>
+    
+    <item>
+      <title>北京游记</title>
+      <link>https://fyq2.netlify.app/2021/07/05/tourist-beijing-vacation/</link>
+      <pubDate>Mon, 05 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/07/05/tourist-beijing-vacation/</guid>
+      <description>前言总要去一次北京的，不论什么时候。这个目标在前年已经实现过，那时的北京让我只觉得是炼狱一般的存在，人们在地铁里面和工具一样麻木的站立，每个人像设定好的程序，重复着一样的流程。我甚至在想，是有多少人是“被迫”留在北京的。作为我们的首都，北京承载了太多，每当我想回到家乡的时候，打开各色求职APP，翻来覆去只有两个大字“销售”，就总有一种无力的感觉涌上心头。我不适合这里，我不想来这里，我不喜欢这里，但我却不得不来这里。
+周六的北京竟然没有预想中的那么热，来之前的降雨总算让这里稍微凉快了一些，见到了每次熟悉到有点掉渣的老朋友们还是难以压抑心中的喜悦。细数起来，我们从高中三年，到本科四年，再到今年已经走过了八个年头，彼此已经有点太过于熟悉，以至于很多时候都不需要说话，都能知道互相的想法。目前在我看来，出游就是和相同的人，去到不同的地方换了一个背景，来增加新鲜的感觉。
+Day1“老北京”一词最早对我来说是一种酸奶，就是那个后来被爆出来是用“老皮鞋”制作的酸奶。但是这两年的“老北京”随着互联网上一些人的功劳，甚至成为了优越的代表，尤其是对吃这块。北京传统的炒肝卤煮什么的也许是不对所有人喜好胃口，但是很多人就这这两样吃食的原材料是下水就以此来贬低北京的吃喝我觉得也大可不必。一方水土养一方人，为什么同样是下水的毛血旺等川菜代表现在好像就是大家默认喜欢的了，在两广地区待过的我也不认为好像像两广地区一样追求食材的精细和“鲜”就是高尚和正确的。（到现在我也吃不惯卤煮，豆汁等）
+Figure 1: 北京涮肉，摄于7.3日晚涮肉这个，个人感觉只要用心基本都不会太差，只能说之前吃的所有涮锅那芝麻酱和这里的一比感觉都是稀释过不知道多少次的样子，只要羊肉够好，稍微在那清水锅里一煮，再沾点这个芝麻酱，只能说是“甭提了”。
+Figure 2: 北京后海边，摄于7.3日晚Figure 3: 北京后海边，摄于7.3日晚Figure 4: 摄于7.3日晚什刹海游船上来到了歌中的地方，除了熟悉的旋律之外没有什么情感上的共鸣，对现在的我来说也许并不会追求什么甜蜜了。
+Figure 5: 摄于7.3日晚鼓楼Figure 6: 当107路再次经过打卡完毕。重头戏当然是我彪哥的生日，这里就直接搬运大UP主陈希飞的大作了。连接。虽然从自然科学的角度来说，许愿是很没有用的事情，但是作为个体的人来说，我还是许愿大家都能健康快乐的度过无数多个生日。
+Day2今日的北京让我无言，不论是早上八点被叫去种地的伟国，还是35°的天气，都让我再次生起难受的感觉，好像昨日的清凉只是北京的面具，今天才是他的常态。
+Figure 7: 摄于天安门广场，建党百年建筑Figure 8: 摄于天安门广场，建党百年建筑Figure 9: 天安门Figure 10: 天安门周边结束每次出去都是感觉在床上躺着聊天很舒服，一去到景点其实并没有很深的触动，但是作为游客还是要记录下来这些记忆。我还是不喜欢一个要见面大家都要挤一个小时多地铁的地方。这是个拥挤的地方，而我却很平凡。</description>
+    </item>
+    
+    <item>
+      <title>各种问题情况采用方法的表格</title>
+      <link>https://fyq2.netlify.app/2021/06/06/situtaion-handle-table/</link>
+      <pubDate>Sun, 06 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/06/06/situtaion-handle-table/</guid>
+      <description>面对各种情况时怎么办在ESL书的阅读学习中遇到了一个比较好的表格，可以直接查表来寻找不同情况下的处理方法。
+</description>
+    </item>
+    
+    <item>
+      <title>Rmarkdown中表格</title>
+      <link>https://fyq2.netlify.app/2021/06/03/rmarkdown-table/</link>
+      <pubDate>Thu, 03 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://fyq2.netlify.app/2021/06/03/rmarkdown-table/</guid>
+      <description>Rmarkdown中表格最近在使用Rmarkdown的时候需要做表，发现了一个比较好的拓展包，kableExtra，通过使用这个包可以实现定制化的表格输出，并且有中文文档，可以学习使用。连接。
+</description>
+    </item>
+    
     <item>
       <title>资源分享</title>
       <link>https://fyq2.netlify.app/2021/05/31/resoures./</link>
@@ -37,15 +113,6 @@
       <guid>https://fyq2.netlify.app/2021/05/28/r-class-home-work/</guid>
       <description>这里由于还没有搞清楚具体的实施方案所以后五次作业还未上传。
 第一次作业第一题help(stem)## starting httpd help server ... donedata5&amp;lt;-c(12, 12, 11, 10, 9, 10, 12)stem(data5)## ## The decimal point is at the |## ## 9 | 0## 10 | 00## 11 | 0## 12 | 000第二题x &amp;lt;- ((0:10000)/10000)*2*piy &amp;lt;- x^3 + sin(x)*cos(x)plot(x, y, col=&amp;quot;blue&amp;quot;, type=&amp;quot;l&amp;quot;, xlab=&amp;quot;自变量X&amp;quot;, ylab=&amp;quot;函数Y&amp;quot;, main=&amp;quot;示意图&amp;quot;)第二次作业第一题1.随机变量\(X~B(10,0.4)\),求分布律和分布函数，求\(P(X=3)\)解：</description>
-    </item>
-    
-    <item>
-      <title>To first make it happen</title>
-      <link>https://fyq2.netlify.app/2021/05/28/to-first-make-it-happen/</link>
-      <pubDate>Fri, 28 May 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://fyq2.netlify.app/2021/05/28/to-first-make-it-happen/</guid>
-      <description>第一次通过别人的帮助和自己的探索成功制作了自己的第一个网页，十分激动。非常感谢统计之都这个论坛，让我找到了同好。</description>
     </item>
     
     <item>

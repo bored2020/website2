@@ -2,23 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fyq2.netlify.app/categories/bess/</loc>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://fyq2.netlify.app/categories/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/kaggle/</loc>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/07/26/kaggle-housingprice/</loc>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/post/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/categories/r/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://fyq2.netlify.app/tags/share/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <loc>https://fyq2.netlify.app/tags/r/</loc>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/tags/</loc>
-    <lastmod>2021-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/07/09/datatable-package/</loc>
+    <lastmod>2021-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/data/</loc>
+    <lastmod>2021-07-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/data-cleaning/</loc>
+    <lastmod>2021-07-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/outlier-points/</loc>
+    <lastmod>2021-07-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/07/08/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/</loc>
+    <lastmod>2021-07-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/beijing/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/chuyou/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/food/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/07/05/kaggle-housing-price-predict/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/life/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/machinelearning/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/rmakrdown/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/share/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/categories/table/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/07/05/tourist-beijing-vacation/</loc>
+    <lastmod>2021-07-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/tags/tecnology/</loc>
+    <lastmod>2021-06-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/06/06/situtaion-handle-table/</loc>
+    <lastmod>2021-06-06T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://fyq2.netlify.app/2021/06/03/rmarkdown-table/</loc>
+    <lastmod>2021-06-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/2021/05/31/resoures./</loc>
     <lastmod>2021-05-31T00:00:00+00:00</lastmod>
@@ -30,9 +93,6 @@
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/2021/05/28/r-class-home-work/</loc>
-    <lastmod>2021-05-28T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://fyq2.netlify.app/2021/05/28/to-first-make-it-happen/</loc>
     <lastmod>2021-05-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://fyq2.netlify.app/2021/05/28/first-est./</loc>

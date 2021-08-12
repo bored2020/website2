@@ -18,8 +18,8 @@ menu:
       url: /about/
     - name: GitHub
       url: https://github.com/bored2020
-    - name: Twitter
-      url: https://fyq2.netlify.app/about/
+    - name: Paper
+      url: /2021/08/10/paper/test.pdf
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
@@ -32,10 +32,10 @@ params:
   highlightjsTheme: github
   highlightjsVersion: 9.12.0
   logo:
-    img: "/images/logo.png"
+    img: "logo.png"
     alt: Logo
     height: 50
-    url: "/"
+    url: /logo.png
     width: 50
 markup:
   defaultMarkdownHandler: goldmark
