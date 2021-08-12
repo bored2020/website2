@@ -1,0 +1,38 @@
+---
+title: "数据分析报告"
+author: "冯裕祺"
+date: "2021/6/7"
+output: html_document
+toc: yes
+---
+
+# 这是一个展示
+展示
+
+
+- 一
+- 二
+- 三
+
+## 这是二级标题
+
+这是散点图
+```{r,fig.align='center',fig.cap="汽车刹车距离散点图"}
+library(MASS)
+data("cars")
+plot(cars$speed~cars$dist,type = "b")
+```
+
+```{python engine.path="D:/ANACONDA/python.exe"}
+import numpy as np
+import pandas as pd 
+a = [1,2,3]
+b = [3,4,5]
+print(a+b)
+```
+
+
+
+# 第二单元
+
+## 分析
