@@ -20,6 +20,8 @@ menu:
       url: https://github.com/bored2020
     - name: CV
       url: /cv.pdf
+    - name: BOOK
+      url: /BOOK.pdf
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
