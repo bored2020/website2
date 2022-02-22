@@ -21,7 +21,7 @@ menu:
     - name: CV
       url: /cv.pdf
     - name: BOOK
-      url: /elegantbook-cn.pdf
+      url: /book2.pdf
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
