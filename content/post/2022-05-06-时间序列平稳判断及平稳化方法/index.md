@@ -1,3 +1,13 @@
+---
+title: '时间序列平稳判断及平稳化方法'
+author: "Yuqi Feng"
+date: '2022-05-06'
+slug: time series
+categories: tech
+tags: python 
+---
+
+
 # 时间序列问题研究
 
 ## 1. Task 1 序列稳定性检验方法汇总
