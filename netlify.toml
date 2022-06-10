@@ -12,3 +12,15 @@ command = "hugo -F -b $DEPLOY_PRIME_URL"
 [context.production]
 [context.production.environment]
 HUGO_ENV = "production"
+
+[build.environment]
+  NODE_VERSION = "14"
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
