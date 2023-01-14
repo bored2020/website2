@@ -22,6 +22,8 @@ menu:
       url: /cv4.pdf
     - name: BOOK
       url: /book2.pdf
+    - name: HOMEPAGE
+      url: /
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
