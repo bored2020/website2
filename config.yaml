@@ -33,12 +33,6 @@ params:
     - yaml
   highlightjsTheme: github
   highlightjsVersion: 9.12.0
-  logo:
-    img: "logo.png"
-    alt: Logo
-    height: 50
-    url: /logo.jpeg
-    width: 50
 markup:
   defaultMarkdownHandler: goldmark
   goldmark:
